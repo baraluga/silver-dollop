@@ -2,5 +2,8 @@
   <!-- Query Input Section -->
   <div class="space-y-8">
     <app-query-input (onQuerySubmit)="handleQuery($event)"></app-query-input>
+    
+    <!-- Insight Display Section -->
+    <app-insight-display [insight]="currentInsight()"></app-insight-display>
   </div>
 </app-layout>
