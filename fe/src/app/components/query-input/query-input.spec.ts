@@ -47,32 +47,32 @@ describe('QueryInput', () => {
   });
 
   it('should emit query on submit when valid', () => {
-    spyOn(component.onQuerySubmit, 'emit');
+    const emitSpy = jest.spyOn(component.onQuerySubmit, 'emit');
     component.setQuery('test query');
     
     component['submit']();
     
-    expect(component.onQuerySubmit.emit).toHaveBeenCalledWith('test query');
+    expect(emitSpy).toHaveBeenCalledWith('test query');
     expect(component['isSubmitting']()).toBe(true);
   });
 
   it('should not emit when query is empty', () => {
-    spyOn(component.onQuerySubmit, 'emit');
+    const emitSpy = jest.spyOn(component.onQuerySubmit, 'emit');
     component.setQuery('   ');
     
     component['submit']();
     
-    expect(component.onQuerySubmit.emit).not.toHaveBeenCalled();
+    expect(emitSpy).not.toHaveBeenCalled();
   });
 
   it('should not emit when already submitting', () => {
-    spyOn(component.onQuerySubmit, 'emit');
+    const emitSpy = jest.spyOn(component.onQuerySubmit, 'emit');
     component.setQuery('test query');
     component.setSubmitting(true);
     
     component['submit']();
     
-    expect(component.onQuerySubmit.emit).not.toHaveBeenCalled();
+    expect(emitSpy).not.toHaveBeenCalled();
   });
 
   it('should have template questions', () => {

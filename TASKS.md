@@ -92,8 +92,9 @@ Simple Angular application with TailwindCSS that allows users to query AI for te
 
 ### 14. Testing
 - [x] Set up Jest for backend unit tests
-- [ ] Set up Jasmine/Karma for frontend tests
+- [x] Set up Jest for frontend tests (replaced Karma/Jasmine)
 - [x] Create integration tests for API endpoints
+- [x] Achieve 100% test coverage for frontend components
 - [ ] Add basic e2e testing setup
 
 ### 15. Deployment
