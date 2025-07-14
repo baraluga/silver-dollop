@@ -3,7 +3,14 @@
   <div class="space-y-8">
     <app-query-input (onQuerySubmit)="handleQuery($event)"></app-query-input>
     
+    <!-- Loading State -->
+    @if (isLoading()) {
+      <app-loading-state></app-loading-state>
+    }
+    
     <!-- Insight Display Section -->
-    <app-insight-display [insight]="currentInsight()"></app-insight-display>
+    @if (!isLoading()) {
+      <app-insight-display [insight]="currentInsight()"></app-insight-display>
+    }
   </div>
 </app-layout>
