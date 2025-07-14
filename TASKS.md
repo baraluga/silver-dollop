@@ -21,9 +21,9 @@ Simple Angular application with TailwindCSS that allows users to query AI for te
 - [x] Implement responsive design with TailwindCSS
 
 ### 3. Template Questions
-- [ ] Implement template question: "What is our team's current availability for the next sprint?"
-- [ ] Implement template question: "Which team members have the highest billability this month?"
-- [ ] Add click handlers to populate query textarea
+- [x] Implement template question: "Team availability next sprint?"
+- [x] Implement template question: "Highest billability this month?"
+- [x] Add click handlers to populate query textarea
 
 ### 4. API Integration
 - [ ] Create Angular service for backend communication
