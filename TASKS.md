@@ -15,7 +15,7 @@ Simple Angular application with TailwindCSS that allows users to query AI for te
 ### 2. UI Components
 - [x] Create main layout component
 - [x] Build query input textarea component
-- [ ] Create template question buttons component
+- [x] Create template question buttons component
 - [ ] Design insight display component
 - [ ] Add loading state indicators
 - [ ] Implement responsive design with TailwindCSS
