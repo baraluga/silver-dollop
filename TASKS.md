@@ -45,35 +45,36 @@ Simple Angular application with TailwindCSS that allows users to query AI for te
 - [x] Configure CORS plugin for frontend communication
 - [x] Set up environment variables handling with @fastify/env
 
-### 7. Tempo API Integration
+### 7. Tempo API Integration (Post-Mock Implementation)
 - [ ] Implement Tempo Planner API client
 - [ ] Implement Tempo Time Logs API client
 - [ ] Add API authentication handling
 - [ ] Create TypeScript interfaces for Tempo responses
 
-### 8. Jira API Integration
+### 8. Jira API Integration (Post-Mock Implementation)
 - [ ] Implement Jira API client using existing credentials
 - [ ] Add team member data retrieval
 - [ ] Implement project data fetching
 - [ ] Handle API rate limiting with simple retry logic
 
-### 9. Data Processing Engine
+### 9. Data Processing Engine (Post-Mock Implementation)
 - [ ] Create availability calculation service
 - [ ] Implement billability metrics calculator
 - [ ] Build team data aggregation logic
 - [ ] Add simple in-memory caching
 
-### 10. AI Integration (Direct API)
+### 10. AI Integration (Post-Mock Implementation)
 - [ ] Set up OpenAI/Claude client
 - [ ] Create prompt templates for resource insights
 - [ ] Implement query processing logic
 - [ ] Add natural language response generation
 
-### 11. API Endpoints
-- [ ] Create `POST /api/insights` endpoint with JSON schema validation
-- [ ] Implement query validation using Fastify schemas
-- [ ] Add response formatting
+### 11. API Endpoints (Mock First Approach)
+- [ ] Create `POST /api/insights` endpoint with realistic mock responses
+- [ ] Implement query validation using Fastify schemas  
+- [ ] Add response formatting for both template questions
 - [ ] Include error handling and logging
+- [ ] Replace mocks with real data processing (after FE is complete)
 
 ## Infrastructure & DevOps
 
@@ -107,10 +108,15 @@ Simple Angular application with TailwindCSS that allows users to query AI for te
 3. User clicks template question OR types custom query
 4. User submits query
 5. Frontend shows loading state
-6. Backend fetches data from Tempo/Jira APIs
-7. Backend sends data + query to AI for insight generation
-8. AI-generated insight appears below query area
-9. User can submit new queries
+6. Backend returns realistic mock insights (initially)
+7. Mock AI-generated insight appears below query area
+8. User can submit new queries
+
+## Development Strategy: Mock First
+- **Phase 1**: Create mock `/api/insights` endpoint with realistic responses
+- **Phase 2**: Build Angular frontend against mocks (parallel development)
+- **Phase 3**: Implement real Tempo/Jira/AI integration
+- **Phase 4**: Replace mocks with real data processing
 
 ## Technical Architecture (MVP)
 
