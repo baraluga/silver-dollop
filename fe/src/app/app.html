@@ -1,11 +1,6 @@
 <app-layout>
-  <!-- Main App Content Will Go Here -->
-  <div class="text-center py-8">
-    <h2 class="text-2xl font-semibold text-gray-900 mb-4">
-      Welcome to Team Resource Insights
-    </h2>
-    <p class="text-gray-600">
-      Query your team's availability and billability with AI-powered insights.
-    </p>
+  <!-- Query Input Section -->
+  <div class="space-y-8">
+    <app-query-input (onQuerySubmit)="handleQuery($event)"></app-query-input>
   </div>
 </app-layout>
