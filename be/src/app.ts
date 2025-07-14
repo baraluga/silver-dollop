@@ -39,6 +39,9 @@ const start = async () => {
       timeWindow: '1 minute'
     })
     
+    // Register routes
+    await fastify.register(require('./routes/insights'))
+    
     // Health check route
     fastify.get('/health', async () => {
       return { status: 'ok', timestamp: new Date().toISOString() }
