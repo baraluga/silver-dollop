@@ -8,9 +8,9 @@ Simple Angular application with TailwindCSS that allows users to query AI for te
 ### 1. Project Setup
 - [x] Create Angular project structure in `fe/` directory
 - [x] Install and configure TailwindCSS
-- [ ] Set up TypeScript configuration
-- [ ] Configure Angular routing (single page for MVP)
+- [x] Set up TypeScript configuration
 - [ ] Set up environment configuration files
+- [ ] Set up ESLint with rules based on CLAUDE.md guidelines
 
 ### 2. UI Components
 - [ ] Create main layout component
