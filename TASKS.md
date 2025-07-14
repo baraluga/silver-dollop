@@ -70,10 +70,10 @@ Simple Angular application with TailwindCSS that allows users to query AI for te
 - [ ] Add natural language response generation
 
 ### 11. API Endpoints (Mock First Approach)
-- [ ] Create `POST /api/insights` endpoint with realistic mock responses
-- [ ] Implement query validation using Fastify schemas  
-- [ ] Add response formatting for both template questions
-- [ ] Include error handling and logging
+- [x] Create `POST /api/insights` endpoint with realistic mock responses
+- [x] Implement query validation using Fastify schemas  
+- [x] Add response formatting for both template questions
+- [x] Include error handling and logging
 - [ ] Replace mocks with real data processing (after FE is complete)
 
 ## Infrastructure & DevOps
@@ -86,14 +86,14 @@ Simple Angular application with TailwindCSS that allows users to query AI for te
 
 ### 13. Security
 - [x] Implement secure credential management (.env files)
-- [ ] Add input validation with Fastify schemas
+- [x] Add input validation with Fastify schemas
 - [x] Configure rate limiting plugin
 - [x] Add basic CORS configuration
 
 ### 14. Testing
-- [ ] Set up Jest for backend unit tests
+- [x] Set up Jest for backend unit tests
 - [ ] Set up Jasmine/Karma for frontend tests
-- [ ] Create integration tests for API endpoints
+- [x] Create integration tests for API endpoints
 - [ ] Add basic e2e testing setup
 
 ### 15. Deployment
