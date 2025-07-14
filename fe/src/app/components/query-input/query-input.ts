@@ -1,6 +1,11 @@
 import { Component, signal, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
+interface TemplateQuestion {
+  id: string;
+  text: string;
+}
+
 @Component({
   selector: 'app-query-input',
   imports: [FormsModule],
@@ -10,6 +15,16 @@ import { FormsModule } from '@angular/forms';
 export class QueryInput {
   protected readonly query = signal('');
   protected readonly isSubmitting = signal(false);
+  protected readonly templateQuestions: TemplateQuestion[] = [
+    {
+      id: 'availability',
+      text: "What is our team's current availability for the next sprint?"
+    },
+    {
+      id: 'billability', 
+      text: 'Which team members have the highest billability this month?'
+    }
+  ];
   
   readonly onQuerySubmit = output<string>();
   
@@ -35,5 +50,9 @@ export class QueryInput {
   
   public setSubmitting(submitting: boolean) {
     this.isSubmitting.set(submitting);
+  }
+  
+  protected selectTemplate(question: TemplateQuestion) {
+    this.query.set(question.text);
   }
 }

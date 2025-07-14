@@ -74,4 +74,27 @@ describe('QueryInput', () => {
     
     expect(component.onQuerySubmit.emit).not.toHaveBeenCalled();
   });
+
+  it('should have template questions', () => {
+    expect(component['templateQuestions'].length).toBe(2);
+    expect(component['templateQuestions'][0].text).toContain('availability');
+    expect(component['templateQuestions'][1].text).toContain('billability');
+  });
+
+  it('should set query when template selected', () => {
+    const question = component['templateQuestions'][0];
+    
+    component['selectTemplate'](question);
+    
+    expect(component['query']()).toBe(question.text);
+  });
+
+  it('should display template chips in template', () => {
+    const compiled = fixture.nativeElement;
+    const chips = compiled.querySelectorAll('button[type="button"]');
+    
+    expect(chips.length).toBe(2);
+    expect(compiled.textContent).toContain('availability');
+    expect(compiled.textContent).toContain('billability');
+  });
 });
