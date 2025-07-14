@@ -30,10 +30,18 @@ export class QueryInput {
   
   protected submit() {
     const queryText = this.query().trim();
-    if (queryText && !this.isSubmitting()) {
-      this.isSubmitting.set(true);
-      this.onQuerySubmit.emit(queryText);
+    if (this.canSubmit(queryText)) {
+      this.processSubmission(queryText);
     }
+  }
+  
+  private canSubmit(queryText: string): boolean {
+    return queryText.length > 0 && !this.isSubmitting();
+  }
+  
+  private processSubmission(queryText: string) {
+    this.isSubmitting.set(true);
+    this.onQuerySubmit.emit(queryText);
   }
   
   protected updateQuery(value: string) {

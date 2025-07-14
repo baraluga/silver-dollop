@@ -25,22 +25,39 @@ export class ApiService {
   }
 
   private handleError(error: HttpErrorResponse): Observable<never> {
-    let errorMessage = 'An unknown error occurred';
-    
-    if (error.error instanceof ErrorEvent) {
-      // Client-side error
-      errorMessage = `Network error: ${error.error.message}`;
-    } else {
-      // Server-side error
-      const apiError = error.error as ApiError;
-      if (apiError && apiError.message) {
-        errorMessage = apiError.message;
-      } else {
-        errorMessage = `Server error: ${error.status} ${error.statusText}`;
-      }
-    }
-    
+    const errorMessage = this.extractErrorMessage(error);
     console.error('API Error:', error);
     return throwError(() => new Error(errorMessage));
+  }
+  
+  private extractErrorMessage(error: HttpErrorResponse): string {
+    if (error.error instanceof ErrorEvent) {
+      return this.getClientErrorMessage(error.error);
+    }
+    return this.getServerErrorMessage(error);
+  }
+  
+  private getClientErrorMessage(errorEvent: ErrorEvent): string {
+    return `Network error: ${errorEvent.message}`;
+  }
+  
+  private getServerErrorMessage(error: HttpErrorResponse): string {
+    const apiError = error.error as ApiError;
+    return this.getApiMessageOrDefault(apiError, error);
+  }
+  
+  private getApiMessageOrDefault(apiError: ApiError, error: HttpErrorResponse): string {
+    if (this.hasValidApiError(apiError)) {
+      return apiError.message;
+    }
+    return this.getDefaultServerError(error);
+  }
+  
+  private hasValidApiError(apiError: ApiError): boolean {
+    return Boolean(apiError && apiError.message);
+  }
+  
+  private getDefaultServerError(error: HttpErrorResponse): string {
+    return `Server error: ${error.status} ${error.statusText}`;
   }
 }

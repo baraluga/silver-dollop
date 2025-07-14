@@ -98,4 +98,24 @@ describe('QueryInput', () => {
     expect(compiled.textContent).toContain('availability');
     expect(compiled.textContent).toContain('billability');
   });
+
+  it('should not submit when query is empty after trim', () => {
+    const emitSpy = jest.spyOn(component.onQuerySubmit, 'emit');
+    component.setQuery('   ');
+    
+    component['submit']();
+    
+    expect(emitSpy).not.toHaveBeenCalled();
+    expect(component['isSubmitting']()).toBe(false);
+  });
+
+  it('should not submit when already submitting', () => {
+    const emitSpy = jest.spyOn(component.onQuerySubmit, 'emit');
+    component.setQuery('test query');
+    component.setSubmitting(true);
+    
+    component['submit']();
+    
+    expect(emitSpy).not.toHaveBeenCalled();
+  });
 });

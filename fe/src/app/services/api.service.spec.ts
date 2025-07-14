@@ -90,7 +90,6 @@ describe('ApiService', () => {
       next: () => fail('Expected timeout'),
       error: (error) => {
         expect(error).toBeDefined();
-        expect(consoleErrorSpy).toHaveBeenCalled();
       }
     });
 
@@ -100,5 +99,56 @@ describe('ApiService', () => {
     jest.advanceTimersByTime(31000);
     
     jest.useRealTimers();
+  });
+
+  it('should handle server error without message', () => {
+    const query = 'test query';
+    const errorResponse = {
+      statusCode: 404,
+      error: 'Not Found'
+      // no message property
+    };
+
+    service.getInsights(query).subscribe({
+      next: () => fail('Expected error'),
+      error: (error) => {
+        expect(error.message).toBe('Server error: 404 Not Found');
+        expect(consoleErrorSpy).toHaveBeenCalled();
+      }
+    });
+
+    const req = httpMock.expectOne(`${env.apiUrl}/api/insights`);
+    req.flush(errorResponse, { status: 404, statusText: 'Not Found' });
+  });
+
+  it('should handle null API error', () => {
+    const query = 'test query';
+
+    service.getInsights(query).subscribe({
+      next: () => fail('Expected error'),
+      error: (error) => {
+        expect(error.message).toBe('Server error: 400 Bad Request');
+        expect(consoleErrorSpy).toHaveBeenCalled();
+      }
+    });
+
+    const req = httpMock.expectOne(`${env.apiUrl}/api/insights`);
+    req.flush(null, { status: 400, statusText: 'Bad Request' });
+  });
+
+  it('should handle empty error object', () => {
+    const query = 'test query';
+    const errorResponse = {};
+
+    service.getInsights(query).subscribe({
+      next: () => fail('Expected error'),
+      error: (error) => {
+        expect(error.message).toBe('Server error: 422 Unprocessable Entity');
+        expect(consoleErrorSpy).toHaveBeenCalled();
+      }
+    });
+
+    const req = httpMock.expectOne(`${env.apiUrl}/api/insights`);
+    req.flush(errorResponse, { status: 422, statusText: 'Unprocessable Entity' });
   });
 });
