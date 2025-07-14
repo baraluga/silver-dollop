@@ -20,15 +20,20 @@
         </textarea>
         
         <!-- Template Question Chips -->
-        <div class="mt-2 flex flex-wrap gap-2">
-          @for (question of templateQuestions; track question.id) {
-            <button
-              type="button"
-              (click)="selectTemplate(question)"
-              class="inline-flex items-center px-3 py-1 text-xs font-medium text-gray-600 bg-gray-100 border border-gray-300 hover:bg-gray-200 hover:text-[#007acd] focus:outline-none focus:bg-gray-200 focus:text-[#007acd] transition-colors">
-              {{ question.text }}
-            </button>
-          }
+        <div class="mt-2">
+          <div class="flex items-center gap-3 mb-2">
+            <span class="text-xs text-gray-500">Quick questions:</span>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            @for (question of templateQuestions; track question.id) {
+              <button
+                type="button"
+                (click)="selectTemplate(question)"
+                class="inline-flex items-center px-3 py-1 text-xs font-medium text-gray-600 bg-gray-100 border border-gray-300 hover:bg-gray-200 hover:text-[#007acd] focus:outline-none focus:bg-gray-200 focus:text-[#007acd] transition-colors">
+                {{ question.text }}
+              </button>
+            }
+          </div>
         </div>
       </div>
       

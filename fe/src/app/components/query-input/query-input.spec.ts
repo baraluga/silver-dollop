@@ -89,11 +89,12 @@ describe('QueryInput', () => {
     expect(component['query']()).toBe(question.text);
   });
 
-  it('should display template chips in template', () => {
+  it('should display template chips with hint label', () => {
     const compiled = fixture.nativeElement;
     const chips = compiled.querySelectorAll('button[type="button"]');
     
     expect(chips.length).toBe(2);
+    expect(compiled.textContent).toContain('Quick questions:');
     expect(compiled.textContent).toContain('availability');
     expect(compiled.textContent).toContain('billability');
   });
