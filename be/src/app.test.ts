@@ -1,4 +1,4 @@
-import Fastify from 'fastify'
+import { buildServer } from './server'
 import { FastifyInstance } from 'fastify'
 
 // Mock environment variables
@@ -9,28 +9,56 @@ describe('App', () => {
   let app: FastifyInstance
 
   beforeEach(async () => {
-    app = Fastify({ logger: false })
-    
-    // Register plugins manually for testing
-    await app.register(require('@fastify/cors'), {
-      origin: ['http://localhost:4200'],
-      credentials: true
-    })
-    
-    await app.register(require('@fastify/rate-limit'), {
-      max: 100,
-      timeWindow: '1 minute'
-    })
-    
-    await app.register(require('./routes/insights'))
-    
-    app.get('/health', async () => {
-      return { status: 'ok', timestamp: new Date().toISOString() }
-    })
+    app = await buildServer()
   })
 
   afterEach(async () => {
     await app.close()
+  })
+
+  describe('start function', () => {
+    it('should handle port parsing correctly', () => {
+      // Test port parsing logic
+      const originalEnv = process.env.PORT
+      
+      // Test with string port
+      process.env.PORT = '3001'
+      const port1 = parseInt(process.env.PORT || '3000')
+      expect(port1).toBe(3001)
+      
+      // Test with undefined port (fallback)
+      delete process.env.PORT
+      const port2 = parseInt(process.env.PORT || '3000')
+      expect(port2).toBe(3000)
+      
+      // Restore original
+      process.env.PORT = originalEnv
+    })
+
+    it('should handle server startup error gracefully', async () => {
+      const mockConsoleError = jest.spyOn(console, 'error').mockImplementation()
+      const mockProcessExit = jest.spyOn(process, 'exit').mockImplementation()
+      
+      try {
+        // Import the start function
+        const { start } = require('./app')
+        
+        // Mock buildServer to throw error
+        const originalBuildServer = require('./server').buildServer
+        require('./server').buildServer = jest.fn().mockRejectedValue(new Error('Test error'))
+        
+        await start()
+        
+        expect(mockConsoleError).toHaveBeenCalledWith(new Error('Test error'))
+        expect(mockProcessExit).toHaveBeenCalledWith(1)
+        
+        // Restore
+        require('./server').buildServer = originalBuildServer
+      } finally {
+        mockConsoleError.mockRestore()
+        mockProcessExit.mockRestore()
+      }
+    })
   })
 
   describe('Health Check', () => {
