@@ -6,8 +6,8 @@ Simple Angular application with TailwindCSS that allows users to query AI for te
 ## Frontend Tasks (Angular + TailwindCSS)
 
 ### 1. Project Setup
-- [ ] Create Angular project structure in `fe/` directory
-- [ ] Install and configure TailwindCSS
+- [x] Create Angular project structure in `fe/` directory
+- [x] Install and configure TailwindCSS
 - [ ] Set up TypeScript configuration
 - [ ] Configure Angular routing (single page for MVP)
 - [ ] Set up environment configuration files
