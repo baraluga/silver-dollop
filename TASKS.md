@@ -40,10 +40,10 @@ Simple Angular application with TailwindCSS that allows users to query AI for te
 ## Backend Tasks (Fastify + TypeScript)
 
 ### 6. API Setup
-- [ ] Create Fastify server in `be/` directory
-- [ ] Set up TypeScript configuration for backend
-- [ ] Configure CORS plugin for frontend communication
-- [ ] Set up environment variables handling with @fastify/env
+- [x] Create Fastify server in `be/` directory
+- [x] Set up TypeScript configuration for backend
+- [x] Configure CORS plugin for frontend communication
+- [x] Set up environment variables handling with @fastify/env
 
 ### 7. Tempo API Integration
 - [ ] Implement Tempo Planner API client
@@ -78,16 +78,16 @@ Simple Angular application with TailwindCSS that allows users to query AI for te
 ## Infrastructure & DevOps
 
 ### 12. Development Environment
-- [ ] Set up package.json for both fe/ and be/
-- [ ] Configure development scripts (npm run dev)
+- [x] Set up package.json for both fe/ and be/
+- [x] Configure development scripts (npm run dev)
 - [ ] Set up concurrent development servers
-- [ ] Add nodemon for backend hot reload
+- [x] Add nodemon for backend hot reload
 
 ### 13. Security
-- [ ] Implement secure credential management (.env files)
+- [x] Implement secure credential management (.env files)
 - [ ] Add input validation with Fastify schemas
-- [ ] Configure rate limiting plugin
-- [ ] Add basic CORS configuration
+- [x] Configure rate limiting plugin
+- [x] Add basic CORS configuration
 
 ### 14. Testing
 - [ ] Set up Jest for backend unit tests
