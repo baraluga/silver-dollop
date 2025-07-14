@@ -18,11 +18,11 @@ export class QueryInput {
   protected readonly templateQuestions: TemplateQuestion[] = [
     {
       id: 'availability',
-      text: "What is our team's current availability for the next sprint?"
+      text: "Team availability next sprint?"
     },
     {
       id: 'billability', 
-      text: 'Which team members have the highest billability this month?'
+      text: 'Highest billability this month?'
     }
   ];
   
