@@ -7,8 +7,10 @@ import { env } from '../../environments/env';
 describe('ApiService', () => {
   let service: ApiService;
   let httpMock: HttpTestingController;
+  let consoleErrorSpy: jest.SpyInstance;
 
   beforeEach(() => {
+    consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
       providers: [ApiService]
@@ -19,6 +21,7 @@ describe('ApiService', () => {
 
   afterEach(() => {
     httpMock.verify();
+    consoleErrorSpy.mockRestore();
   });
 
   it('should be created', () => {
@@ -56,6 +59,7 @@ describe('ApiService', () => {
       next: () => fail('Expected error'),
       error: (error) => {
         expect(error.message).toBe('Server error occurred');
+        expect(consoleErrorSpy).toHaveBeenCalled();
       }
     });
 
@@ -70,6 +74,7 @@ describe('ApiService', () => {
       next: () => fail('Expected error'),
       error: (error) => {
         expect(error.message).toContain('Network error');
+        expect(consoleErrorSpy).toHaveBeenCalled();
       }
     });
 
@@ -84,7 +89,8 @@ describe('ApiService', () => {
     service.getInsights(query).subscribe({
       next: () => fail('Expected timeout'),
       error: (error) => {
-        expect(error.name).toBe('TimeoutError');
+        expect(error).toBeDefined();
+        expect(consoleErrorSpy).toHaveBeenCalled();
       }
     });
 

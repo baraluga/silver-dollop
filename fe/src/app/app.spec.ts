@@ -7,8 +7,13 @@ import { Insight } from './models/insight.interface';
 
 describe('App', () => {
   let mockApiService: jest.Mocked<ApiService>;
+  let consoleLogSpy: jest.SpyInstance;
+  let consoleErrorSpy: jest.SpyInstance;
 
   beforeEach(async () => {
+    consoleLogSpy = jest.spyOn(console, 'log').mockImplementation();
+    consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+    
     mockApiService = {
       getInsights: jest.fn()
     } as any;
@@ -19,6 +24,11 @@ describe('App', () => {
         { provide: ApiService, useValue: mockApiService }
       ]
     }).compileComponents();
+  });
+
+  afterEach(() => {
+    consoleLogSpy.mockRestore();
+    consoleErrorSpy.mockRestore();
   });
 
   it('should create the app', () => {
@@ -64,6 +74,7 @@ describe('App', () => {
     expect(app['errorMessage']()).toBeNull();
     expect(app['queryInput'].setSubmitting).toHaveBeenCalledWith(false);
     expect(mockApiService.getInsights).toHaveBeenCalledWith('test query');
+    expect(consoleLogSpy).toHaveBeenCalledWith('Query submitted:', 'test query');
   });
 
   it('should handle API error', () => {
@@ -80,5 +91,7 @@ describe('App', () => {
     expect(app['currentInsight']()).toBeNull();
     expect(app['errorMessage']()).toBe(errorMessage);
     expect(app['queryInput'].setSubmitting).toHaveBeenCalledWith(false);
+    expect(consoleLogSpy).toHaveBeenCalledWith('Query submitted:', 'test query');
+    expect(consoleErrorSpy).toHaveBeenCalled();
   });
 });
