@@ -1,10 +1,23 @@
 import { TestBed } from '@angular/core/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { of, throwError } from 'rxjs';
 import { App } from './app';
+import { ApiService } from './services/api.service';
+import { Insight } from './models/insight.interface';
 
 describe('App', () => {
+  let mockApiService: jest.Mocked<ApiService>;
+
   beforeEach(async () => {
+    mockApiService = {
+      getInsights: jest.fn()
+    } as any;
+
     await TestBed.configureTestingModule({
-      imports: [App],
+      imports: [App, HttpClientTestingModule],
+      providers: [
+        { provide: ApiService, useValue: mockApiService }
+      ]
     }).compileComponents();
   });
 
@@ -28,28 +41,44 @@ describe('App', () => {
     expect(app['title']()).toBe('Team Resource Insights');
     expect(app['currentInsight']()).toBeNull();
     expect(app['isLoading']()).toBe(false);
+    expect(app['errorMessage']()).toBeNull();
   });
 
-  it('should handle query submission', () => {
-    jest.useFakeTimers();
+  it('should handle successful query submission', () => {
+    const mockInsight: Insight = {
+      title: 'Test Insight',
+      summary: 'Test Summary',
+      insights: ['Test item 1', 'Test item 2']
+    };
+    
+    mockApiService.getInsights.mockReturnValue(of(mockInsight));
+    
     const fixture = TestBed.createComponent(App);
     const app = fixture.componentInstance;
-    
-    // Mock the queryInput ViewChild to avoid undefined error
     app['queryInput'] = { setSubmitting: jest.fn() } as any;
     
     app['handleQuery']('test query');
     
-    expect(app['isLoading']()).toBe(true);
-    expect(app['currentInsight']()).toBeNull();
+    expect(app['isLoading']()).toBe(false);
+    expect(app['currentInsight']()).toEqual(mockInsight);
+    expect(app['errorMessage']()).toBeNull();
+    expect(app['queryInput'].setSubmitting).toHaveBeenCalledWith(false);
+    expect(mockApiService.getInsights).toHaveBeenCalledWith('test query');
+  });
+
+  it('should handle API error', () => {
+    const errorMessage = 'API Error occurred';
+    mockApiService.getInsights.mockReturnValue(throwError(() => new Error(errorMessage)));
     
-    jest.advanceTimersByTime(2000);
+    const fixture = TestBed.createComponent(App);
+    const app = fixture.componentInstance;
+    app['queryInput'] = { setSubmitting: jest.fn() } as any;
+    
+    app['handleQuery']('test query');
     
     expect(app['isLoading']()).toBe(false);
-    expect(app['currentInsight']()).not.toBeNull();
-    expect(app['currentInsight']()?.title).toBe('Team Resource Analysis');
+    expect(app['currentInsight']()).toBeNull();
+    expect(app['errorMessage']()).toBe(errorMessage);
     expect(app['queryInput'].setSubmitting).toHaveBeenCalledWith(false);
-    
-    jest.useRealTimers();
   });
 });

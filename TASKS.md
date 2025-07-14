@@ -26,10 +26,10 @@ Simple Angular application with TailwindCSS that allows users to query AI for te
 - [x] Add click handlers to populate query textarea
 
 ### 4. API Integration
-- [ ] Create Angular service for backend communication
-- [ ] Implement HTTP client configuration
-- [ ] Add error handling for API calls
-- [ ] Create data models/interfaces for API responses
+- [x] Create Angular service for backend communication
+- [x] Implement HTTP client configuration
+- [x] Add error handling for API calls
+- [x] Create data models/interfaces for API responses
 
 ### 5. State Management
 - [ ] Implement query state management

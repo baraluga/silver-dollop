@@ -1,10 +1,5 @@
 import { Component, input } from '@angular/core';
-
-export interface Insight {
-  title: string;
-  summary: string;
-  insights: string[];
-}
+import { Insight } from '../../models/insight.interface';
 
 @Component({
   selector: 'app-insight-display',

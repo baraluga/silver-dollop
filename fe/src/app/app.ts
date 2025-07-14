@@ -1,12 +1,15 @@
 import { Component, signal, ViewChild } from '@angular/core';
 import { Layout } from './components/layout/layout';
 import { QueryInput } from './components/query-input/query-input';
-import { InsightDisplay, Insight } from './components/insight-display/insight-display';
+import { InsightDisplay } from './components/insight-display/insight-display';
 import { LoadingState } from './components/loading-state/loading-state';
+import { ErrorDisplay } from './components/error-display/error-display';
+import { ApiService } from './services/api.service';
+import { Insight } from './models/insight.interface';
 
 @Component({
   selector: 'app-root',
-  imports: [Layout, QueryInput, InsightDisplay, LoadingState],
+  imports: [Layout, QueryInput, InsightDisplay, LoadingState, ErrorDisplay],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
@@ -16,30 +19,31 @@ export class App {
   protected readonly title = signal('Team Resource Insights');
   protected readonly currentInsight = signal<Insight | null>(null);
   protected readonly isLoading = signal(false);
+  protected readonly errorMessage = signal<string | null>(null);
+  
+  constructor(private apiService: ApiService) {}
   
   protected handleQuery(query: string) {
     console.log('Query submitted:', query);
     
-    // Set loading state
+    // Reset state
     this.isLoading.set(true);
     this.currentInsight.set(null);
+    this.errorMessage.set(null);
     
-    // Simulate API call delay
-    setTimeout(() => {
-      const mockInsight: Insight = {
-        title: 'Team Resource Analysis',
-        summary: 'Based on current data, here are the key insights about your team resources:',
-        insights: [
-          'Sarah Johnson has the highest availability with 32 hours for next sprint',
-          'Development team billability is at 78% this month, above target',
-          'UI/UX capacity may be constrained with only 16 hours available',
-          'Consider redistributing workload to optimize team efficiency'
-        ]
-      };
-      
-      this.currentInsight.set(mockInsight);
-      this.isLoading.set(false);
-      this.queryInput.setSubmitting(false);
-    }, 2000);
+    // Call real API
+    this.apiService.getInsights(query).subscribe({
+      next: (insight) => {
+        this.currentInsight.set(insight);
+        this.isLoading.set(false);
+        this.queryInput.setSubmitting(false);
+      },
+      error: (error) => {
+        console.error('API call failed:', error);
+        this.errorMessage.set(error.message);
+        this.isLoading.set(false);
+        this.queryInput.setSubmitting(false);
+      }
+    });
   }
 }

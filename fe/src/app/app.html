@@ -8,8 +8,13 @@
       <app-loading-state></app-loading-state>
     }
     
+    <!-- Error Display -->
+    @if (!isLoading() && errorMessage()) {
+      <app-error-display [errorMessage]="errorMessage()"></app-error-display>
+    }
+    
     <!-- Insight Display Section -->
-    @if (!isLoading()) {
+    @if (!isLoading() && !errorMessage()) {
       <app-insight-display [insight]="currentInsight()"></app-insight-display>
     }
   </div>
