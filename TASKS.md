@@ -13,7 +13,7 @@ Simple Angular application with TailwindCSS that allows users to query AI for te
 - [x] Set up ESLint with rules based on CLAUDE.md guidelines
 
 ### 2. UI Components
-- [ ] Create main layout component
+- [x] Create main layout component
 - [ ] Build query input textarea component
 - [ ] Create template question buttons component
 - [ ] Design insight display component
