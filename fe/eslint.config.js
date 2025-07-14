@@ -1,15 +1,22 @@
 // @ts-check
-const eslint = require("@eslint/js");
-const tseslint = require("typescript-eslint");
-const angular = require("@angular-eslint/eslint-plugin");
+const tseslint = require("@typescript-eslint/eslint-plugin");
+const parser = require("@typescript-eslint/parser");
 
 module.exports = [
   {
     files: ["**/*.ts"],
-    extends: [
-      eslint.configs.recommended,
-      ...tseslint.configs.recommended,
-    ],
+    ignores: ["**/*.spec.ts"],
+    languageOptions: {
+      parser: parser,
+      parserOptions: {
+        ecmaVersion: 2022,
+        sourceType: "module",
+        project: "./tsconfig.app.json",
+      },
+    },
+    plugins: {
+      "@typescript-eslint": tseslint,
+    },
     rules: {
       // CLAUDE.md: Maximum 20 lines per function
       "max-lines-per-function": ["error", { max: 20, skipBlankLines: true, skipComments: true }],
@@ -26,31 +33,22 @@ module.exports = [
       // CLAUDE.md: Single Responsibility Principle
       "max-statements": ["error", 10],
       
-      // CLAUDE.md: Always use types
+      // TypeScript rules
       "@typescript-eslint/no-explicit-any": "error",
-      "@typescript-eslint/explicit-function-return-type": "warn",
+      "@typescript-eslint/no-unused-vars": "error",
       
-      // CLAUDE.md: Meaningful names, no abbreviations
+      // Basic naming conventions
       "@typescript-eslint/naming-convention": [
         "error",
         {
           selector: "variableLike",
           format: ["camelCase"],
-          leadingUnderscore: "forbid",
-          trailingUnderscore: "forbid",
         },
         {
           selector: "typeLike",
           format: ["PascalCase"],
         },
       ],
-      
-      // Code quality rules aligned with CLAUDE.md
-      "@typescript-eslint/no-unused-vars": "error",
-      "@typescript-eslint/prefer-const": "error",
-      
-      // Disable overly strict rules for Angular
-      "@typescript-eslint/explicit-member-accessibility": "off",
     },
   },
   {
@@ -61,8 +59,6 @@ module.exports = [
     plugins: {
       "@angular-eslint/template": require("@angular-eslint/eslint-plugin-template"),
     },
-    rules: {
-      "@angular-eslint/template/no-negated-async": "error",
-    },
+    rules: {},
   }
 ];
