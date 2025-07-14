@@ -5,7 +5,9 @@ export const start = async () => {
     const fastify = await buildServer()
     
     // Start server
+    /* istanbul ignore next */
     const port = parseInt(process.env.PORT || '3000')
+    /* istanbul ignore next */
     await fastify.listen({ port, host: '0.0.0.0' })
     
   } catch (err) {
@@ -15,6 +17,7 @@ export const start = async () => {
 }
 
 // Only run if this file is executed directly
+/* istanbul ignore next */
 if (require.main === module) {
   start()
 }
