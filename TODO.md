@@ -4,6 +4,15 @@
 
 Simple Angular application with TailwindCSS that allows users to query AI for team resource insights with template questions. Single page with query input and insight display.
 
+## New Requirements
+
+### Ideal Billability Ratio Constant
+- [ ] **Backend**: Define ideal billability ratio as a constant (e.g., 75%) in appropriate service/config
+- [ ] **Integration**: Use billability ratio constant as context in AI insights generation
+- [ ] **Implementation**: Reference this constant when generating billability analysis and recommendations
+
+**Requirement**: The system should use a predefined "ideal billability ratio" constant as additional context when generating insights
+
 ### 5. State Management
 
 - [ ] Implement query state management
