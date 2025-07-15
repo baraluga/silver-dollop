@@ -58,7 +58,12 @@ export class JiraService {
   }
 
   private getErrorStatus(error: unknown): number | undefined {
-    return (error as { response?: { status?: number } })?.response?.status;
+    const errorObj = error as { response?: { status?: number } };
+    return this.extractStatusFromResponse(errorObj?.response);
+  }
+
+  private extractStatusFromResponse(response?: { status?: number }): number | undefined {
+    return response?.status;
   }
 
   private delay(ms: number): Promise<void> {
