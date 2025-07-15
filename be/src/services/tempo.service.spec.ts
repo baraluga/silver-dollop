@@ -84,4 +84,37 @@ describe('TempoService', () => {
       expect(result).toEqual(mockResponse.data.results);
     });
   });
+
+  describe('getTeamData', () => {
+    it('should fetch team data with authentication', async () => {
+      const mockResponse = {
+        data: {
+          results: [
+            {
+              id: 'team1',
+              name: 'Development Team',
+              lead: { accountId: 'lead1', displayName: 'Team Lead' },
+              members: [
+                { accountId: 'member1', displayName: 'Member 1' }
+              ]
+            }
+          ]
+        }
+      };
+
+      mockedAxios.get.mockResolvedValue(mockResponse);
+
+      const result = await service.getTeamData();
+
+      expect(mockedAxios.get).toHaveBeenCalledWith(
+        'https://api.tempo.io/4/teams',
+        {
+          headers: {
+            'Authorization': `Bearer ${process.env.TEMPO_API_TOKEN}`
+          }
+        }
+      );
+      expect(result).toEqual(mockResponse.data);
+    });
+  });
 });

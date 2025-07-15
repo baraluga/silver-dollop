@@ -103,4 +103,20 @@ describe('JiraService', () => {
       expect(result).toEqual(mockUsers);
     });
   });
+
+  describe('getUserData', () => {
+    it('should return current user data', async () => {
+      const mockUserData = { accountId: 'current123', displayName: 'Current User' };
+      
+      mockedAxios.get.mockResolvedValue({ data: mockUserData });
+      
+      const result = await service.getUserData();
+      
+      expect(result).toEqual(mockUserData);
+      expect(mockedAxios.get).toHaveBeenCalledWith(
+        `${process.env.JIRA_BASE_URL}/rest/api/3/myself`,
+        { headers: { 'Authorization': `Basic ${process.env.JIRA_AUTH_64}` } }
+      );
+    });
+  });
 });

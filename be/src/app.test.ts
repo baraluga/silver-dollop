@@ -70,8 +70,11 @@ describe('App', () => {
 
       expect(response.statusCode).toBe(200)
       const body = JSON.parse(response.body)
-      expect(body.status).toBe('ok')
+      expect(['healthy', 'degraded']).toContain(body.status)
       expect(body.timestamp).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/)
+      expect(body.checks).toHaveProperty('backend')
+      expect(body.checks).toHaveProperty('tempo')
+      expect(body.checks).toHaveProperty('jira')
     })
   })
 
