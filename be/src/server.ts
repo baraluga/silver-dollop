@@ -14,7 +14,8 @@ const envSchema = {
     TEMPO_API_TOKEN: { type: 'string' },
     JIRA_BASE_URL: { type: 'string' },
     JIRA_EMAIL: { type: 'string' },
-    JIRA_API_TOKEN: { type: 'string' }
+    JIRA_API_TOKEN: { type: 'string' },
+    GEMINI_API_KEY: { type: 'string' }
   }
 }
 
