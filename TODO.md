@@ -7,27 +7,13 @@ Simple Angular application with TailwindCSS that allows users to query AI for te
 ## New Requirements
 
 ### Ideal Billability Ratio Constant
+
 - [ ] **Backend**: Define ideal billability ratio as a constant (e.g., 75%) in appropriate service/config
 - [ ] **Integration**: Use billability ratio constant as context in AI insights generation
 - [ ] **Implementation**: Reference this constant when generating billability analysis and recommendations
 
 **Requirement**: The system should use a predefined "ideal billability ratio" constant as additional context when generating insights
 
-### 5. State Management
-
-- [ ] Implement query state management
-- [ ] Handle loading states
-- [ ] Manage insight display state
-- [ ] Add error state handling
-
-## Backend Tasks (Fastify + TypeScript)
-
-### 6. API Setup
-
-- [x] Create Fastify server in `be/` directory
-- [x] Set up TypeScript configuration for backend
-- [x] Configure CORS plugin for frontend communication
-- [x] Set up environment variables handling with @fastify/env
 
 ### 7. Tempo API Integration (Post-Mock Implementation)
 
@@ -39,8 +25,7 @@ Simple Angular application with TailwindCSS that allows users to query AI for te
 ### 8. Jira API Integration (Post-Mock Implementation)
 
 - [ ] Implement Jira API client using existing credentials
-- [ ] Add team member data retrieval
-- [ ] Implement project data fetching
+- [ ] Add team member data retrieval (names, emails, profiles)
 - [ ] Handle API rate limiting with simple retry logic
 
 ### 9. Data Processing Engine (Post-Mock Implementation)
@@ -142,7 +127,7 @@ src/
 │   └── insights.ts
 ├── services/
 │   ├── tempo.service.ts
-│   ├── jira.service.ts
+│   ├── jira.service.ts (user data only)
 │   ├── ai.service.ts
 │   └── data.service.ts
 └── app.ts
@@ -171,7 +156,7 @@ src/
 - [ ] Application loads and displays correctly
 - [ ] Template questions populate textarea when clicked
 - [ ] Custom queries can be submitted
-- [ ] Backend successfully retrieves Tempo/Jira data
+- [ ] Backend successfully retrieves Tempo data and Jira user information
 - [ ] AI generates meaningful insights about team resources
 - [ ] Insights display properly in the frontend
 - [ ] Application handles errors gracefully
