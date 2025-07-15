@@ -1,6 +1,7 @@
 import { FastifyInstance } from 'fastify';
 import { tempoService } from '../services/tempo.service';
 import { jiraService } from '../services/jira.service';
+import { GeminiService } from '../services/gemini.service';
 
 interface HealthCheck {
   status: string;
@@ -11,6 +12,7 @@ interface HealthChecks {
   backend: HealthCheck;
   tempo: HealthCheck;
   jira: HealthCheck;
+  gemini: HealthCheck;
 }
 
 async function checkTempoHealth(): Promise<HealthCheck> {
@@ -37,6 +39,19 @@ async function checkJiraHealth(): Promise<HealthCheck> {
   }
 }
 
+async function checkGeminiHealth(): Promise<HealthCheck> {
+  try {
+    const geminiService = new GeminiService();
+    await geminiService.generateInsights('test', {});
+    return { status: 'healthy', message: 'Gemini AI is accessible' };
+  } catch {
+    return { 
+      status: 'error', 
+      message: 'Gemini AI connection failed. Check GEMINI_API_KEY in .env file' 
+    };
+  }
+}
+
 function determineOverallStatus(checks: HealthChecks): string {
   const isHealthy = Object.values(checks).every(check => check.status === 'healthy');
   return isHealthy ? 'healthy' : 'degraded';
@@ -47,7 +62,8 @@ export default async function healthRoutes(fastify: FastifyInstance) {
     const checks: HealthChecks = {
       backend: { status: 'healthy', message: 'Backend is running' },
       tempo: await checkTempoHealth(),
-      jira: await checkJiraHealth()
+      jira: await checkJiraHealth(),
+      gemini: await checkGeminiHealth()
     };
 
     return {
