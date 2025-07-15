@@ -13,6 +13,7 @@ interface HealthResponse {
     backend: HealthCheck;
     tempo: HealthCheck;
     jira: HealthCheck;
+    gemini: HealthCheck;
   };
 }
 
@@ -60,5 +61,10 @@ export class ApiStatusComponent implements OnInit {
   private extractMessage(check: HealthCheck | undefined): string {
     if (!check) return '';
     return check.message;
+  }
+
+  hasErrors(): boolean {
+    if (!this.healthStatus) return false;
+    return Object.values(this.healthStatus.checks).some(check => check.status !== 'healthy');
   }
 }

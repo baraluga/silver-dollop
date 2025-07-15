@@ -15,6 +15,7 @@ interface HealthResponse {
     backend: HealthCheck;
     tempo: HealthCheck;
     jira: HealthCheck;
+    gemini: HealthCheck;
   };
 }
 

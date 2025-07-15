@@ -35,7 +35,8 @@ describe('ApiStatusComponent', () => {
       checks: {
         backend: { status: 'healthy', message: 'Backend is running' },
         tempo: { status: 'healthy', message: 'Tempo API is accessible' },
-        jira: { status: 'healthy', message: 'JIRA API is accessible' }
+        jira: { status: 'healthy', message: 'JIRA API is accessible' },
+        gemini: { status: 'healthy', message: 'Gemini AI is accessible' }
       }
     };
 
@@ -47,6 +48,7 @@ describe('ApiStatusComponent', () => {
     expect(component.isHealthy('backend')).toBe(true);
     expect(component.isHealthy('tempo')).toBe(true);
     expect(component.isHealthy('jira')).toBe(true);
+    expect(component.isHealthy('gemini')).toBe(true);
   });
 
   it('should display error status when Tempo API fails', () => {
@@ -55,7 +57,8 @@ describe('ApiStatusComponent', () => {
       checks: {
         backend: { status: 'healthy', message: 'Backend is running' },
         tempo: { status: 'error', message: 'Tempo API connection failed. Check TEMPO_API_TOKEN in .env file' },
-        jira: { status: 'healthy', message: 'JIRA API is accessible' }
+        jira: { status: 'healthy', message: 'JIRA API is accessible' },
+        gemini: { status: 'healthy', message: 'Gemini AI is accessible' }
       }
     };
 
@@ -65,6 +68,7 @@ describe('ApiStatusComponent', () => {
 
     expect(component.isHealthy('tempo')).toBe(false);
     expect(component.getStatusMessage('tempo')).toBe('Tempo API connection failed. Check TEMPO_API_TOKEN in .env file');
+    expect(component.hasErrors()).toBe(true);
   });
 
   it('should handle API service error', () => {
@@ -77,5 +81,49 @@ describe('ApiStatusComponent', () => {
 
     expect(consoleErrorSpy).toHaveBeenCalledWith('Error loading health status:', error);
     consoleErrorSpy.mockRestore();
+  });
+
+  it('should display error status when Gemini AI fails', () => {
+    const errorResponse = {
+      status: 'degraded',
+      checks: {
+        backend: { status: 'healthy', message: 'Backend is running' },
+        tempo: { status: 'healthy', message: 'Tempo API is accessible' },
+        jira: { status: 'healthy', message: 'JIRA API is accessible' },
+        gemini: { status: 'error', message: 'Gemini AI connection failed. Check GEMINI_API_KEY in .env file' }
+      }
+    };
+
+    mockApiService.getHealthStatus.mockReturnValue(of(errorResponse));
+
+    fixture.detectChanges();
+
+    expect(component.isHealthy('gemini')).toBe(false);
+    expect(component.getStatusMessage('gemini')).toBe('Gemini AI connection failed. Check GEMINI_API_KEY in .env file');
+    expect(component.hasErrors()).toBe(true);
+  });
+
+  it('should return false for hasErrors when all APIs are healthy', () => {
+    const healthyResponse = {
+      status: 'healthy',
+      checks: {
+        backend: { status: 'healthy', message: 'Backend is running' },
+        tempo: { status: 'healthy', message: 'Tempo API is accessible' },
+        jira: { status: 'healthy', message: 'JIRA API is accessible' },
+        gemini: { status: 'healthy', message: 'Gemini AI is accessible' }
+      }
+    };
+
+    mockApiService.getHealthStatus.mockReturnValue(of(healthyResponse));
+
+    fixture.detectChanges();
+
+    expect(component.hasErrors()).toBe(false);
+  });
+
+  it('should return empty string for getStatusMessage when healthStatus is null', () => {
+    component.healthStatus = null;
+    
+    expect(component.getStatusMessage('tempo')).toBe('');
   });
 });

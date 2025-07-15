@@ -1,41 +1,51 @@
-<div class="api-status-container bg-white rounded-lg shadow-md p-6 mb-6">
-  <h2 class="text-lg font-semibold mb-4 text-gray-800">API Status</h2>
-  
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-    <!-- Backend Status -->
-    <div class="api-status-item">
-      <div class="flex items-center mb-2">
-        <div class="status-indicator" 
-             [class.healthy]="isHealthy('backend')"
-             [class.error]="!isHealthy('backend')">
+<div class="api-status-container bg-gray-50 rounded-lg p-4 mb-4">
+  <div class="flex items-center justify-between">
+    <div class="flex items-center space-x-1">
+      <span class="text-sm font-medium text-gray-600">Status:</span>
+      <div class="flex items-center space-x-3">
+        <!-- Backend Status -->
+        <div class="flex items-center space-x-1">
+          <div class="status-dot" 
+               [class.healthy]="isHealthy('backend')"
+               [class.error]="!isHealthy('backend')">
+          </div>
+          <span class="text-xs text-gray-600">BE</span>
         </div>
-        <span class="font-medium text-gray-700 ml-2">Backend</span>
-      </div>
-      <p class="text-sm text-gray-600">{{ getStatusMessage('backend') }}</p>
-    </div>
 
-    <!-- Tempo Status -->
-    <div class="api-status-item">
-      <div class="flex items-center mb-2">
-        <div class="status-indicator" 
-             [class.healthy]="isHealthy('tempo')"
-             [class.error]="!isHealthy('tempo')">
+        <!-- Tempo Status -->
+        <div class="flex items-center space-x-1">
+          <div class="status-dot" 
+               [class.healthy]="isHealthy('tempo')"
+               [class.error]="!isHealthy('tempo')">
+          </div>
+          <span class="text-xs text-gray-600">Tempo</span>
         </div>
-        <span class="font-medium text-gray-700 ml-2">Tempo API</span>
-      </div>
-      <p class="text-sm text-gray-600">{{ getStatusMessage('tempo') }}</p>
-    </div>
 
-    <!-- JIRA Status -->
-    <div class="api-status-item">
-      <div class="flex items-center mb-2">
-        <div class="status-indicator" 
-             [class.healthy]="isHealthy('jira')"
-             [class.error]="!isHealthy('jira')">
+        <!-- JIRA Status -->
+        <div class="flex items-center space-x-1">
+          <div class="status-dot" 
+               [class.healthy]="isHealthy('jira')"
+               [class.error]="!isHealthy('jira')">
+          </div>
+          <span class="text-xs text-gray-600">JIRA</span>
         </div>
-        <span class="font-medium text-gray-700 ml-2">JIRA API</span>
+
+        <!-- Gemini Status -->
+        <div class="flex items-center space-x-1">
+          <div class="status-dot" 
+               [class.healthy]="isHealthy('gemini')"
+               [class.error]="!isHealthy('gemini')">
+          </div>
+          <span class="text-xs text-gray-600">AI</span>
+        </div>
       </div>
-      <p class="text-sm text-gray-600">{{ getStatusMessage('jira') }}</p>
+    </div>
+    
+    <!-- Error Messages (only show if there are errors) -->
+    <div *ngIf="hasErrors()" class="text-xs text-red-600">
+      <span *ngIf="!isHealthy('tempo')">Check Tempo token</span>
+      <span *ngIf="!isHealthy('jira')">Check JIRA token</span>
+      <span *ngIf="!isHealthy('gemini')">Check AI key</span>
     </div>
   </div>
 </div>
