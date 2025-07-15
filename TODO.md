@@ -4,29 +4,12 @@
 
 Simple Angular application with TailwindCSS that allows users to query AI for team resource insights with template questions. Single page with query input and insight display.
 
-## New Requirements
-
-### Ideal Billability Ratio Constant
-
-- [x] **Backend**: Define ideal billability ratio as a constant (e.g., 75%) in appropriate service/config
-- [x] **Integration**: Use billability ratio constant as context in AI insights generation
-- [x] **Implementation**: Reference this constant when generating billability analysis and recommendations
-
-**Requirement**: The system should use a predefined "ideal billability ratio" constant as additional context when generating insights
-
-✅ **COMPLETED**: Billability ratio constant (75%) is now implemented and integrated into AI insights generation.
-
-
 ### 9. Data Processing Engine (Post-Mock Implementation)
 
-- [ ] Create availability calculation service
-- [ ] Implement billability metrics calculator
-- [ ] Build team data aggregation logic
 - [ ] Add simple in-memory caching
 
 ### 10. AI Integration (Post-Mock Implementation)
 
-- [ ] Set up OpenAI/Claude client
 - [ ] Create prompt templates for resource insights
 - [ ] Implement query processing logic
 - [ ] Add natural language response generation
@@ -34,8 +17,8 @@ Simple Angular application with TailwindCSS that allows users to query AI for te
 ## Infrastructure & DevOps
 
 ### 14. Testing
-- [ ] Add basic e2e testing setup
 
+- [ ] Add basic e2e testing setup
 
 ## MVP User Flow
 
