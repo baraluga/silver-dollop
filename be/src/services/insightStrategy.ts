@@ -83,13 +83,8 @@ function findMatchingStrategy(query: string): InsightStrategy {
   const strategies = [new AvailabilityStrategy(), new BillabilityStrategy()]
   const lowerQuery = query.toLowerCase()
   
-  for (const strategy of strategies) {
-    if (strategy.matches(lowerQuery)) {
-      return strategy
-    }
-  }
-  
-  return new CustomStrategy()
+  const matchedStrategy = strategies.find(strategy => strategy.matches(lowerQuery))
+  return matchedStrategy || new CustomStrategy()
 }
 
 export function processQuery(query: string): InsightResponse {
