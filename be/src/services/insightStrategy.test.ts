@@ -52,5 +52,13 @@ describe('InsightStrategy', () => {
       
       expect(result.title).toBe('Custom Query Analysis')
     })
+
+    it('should always match with custom strategy fallback', () => {
+      const result = processQuery('completely unrelated query about weather')
+      
+      expect(result.title).toBe('Custom Query Analysis')
+      expect(result.summary).toContain('based on your query')
+      expect(result.insights).toHaveLength(5)
+    })
   })
 })
