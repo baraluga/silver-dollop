@@ -1,3 +1,5 @@
+import { getBillabilityConfig } from '../config/billability.config';
+
 type InsightResponse = {
   title: string;
   summary: string;
@@ -27,7 +29,7 @@ const mockInsights = {
       "🏆 **Top Performers**: Michael Chen (92% billable), Sarah Johnson (89% billable), and David Rodriguez (85% billable)",
       "📈 **Above Average**: Emily Watson (78% billable) and James Wilson (76% billable) are performing well",
       "📉 **Below Target**: Lisa Brown (65% billable) and Robert Davis (62% billable) need attention",
-      "💰 **Team Average**: 78% billability rate (Target: 75%)",
+      `💰 **Team Average**: 78% billability rate (ideal target: ${getBillabilityConfig().idealRatioPercentage}%)`,
       "🔍 **Analysis**: Non-billable time is mostly spent on internal meetings (15%) and training (10%)",
       "💡 **Recommendations**: Focus on reducing meeting overhead and streamlining admin tasks for Lisa and Robert",
     ],

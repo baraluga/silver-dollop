@@ -38,6 +38,13 @@ describe('InsightStrategy', () => {
       expect(result.title).toBe('Team Availability Analysis')
     })
 
+    it('should include ideal billability ratio in billability insights', () => {
+      const result = processQuery('Show billability metrics')
+      
+      expect(result.insights.some(insight => insight.includes('75%'))).toBe(true)
+      expect(result.insights.some(insight => insight.includes('ideal target'))).toBe(true)
+    })
+
     it('should return custom response for unmatched queries', () => {
       const result = processQuery('How is performance overall?')
       
