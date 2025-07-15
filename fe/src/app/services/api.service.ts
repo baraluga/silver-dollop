@@ -4,6 +4,20 @@ import { Observable } from 'rxjs';
 import { env } from '../../environments/env';
 import { Insight, InsightRequest } from '../models/insight.interface';
 
+interface HealthCheck {
+  status: string;
+  message: string;
+}
+
+interface HealthResponse {
+  status: string;
+  checks: {
+    backend: HealthCheck;
+    tempo: HealthCheck;
+    jira: HealthCheck;
+  };
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -16,5 +30,9 @@ export class ApiService {
     const request: InsightRequest = { query };
 
     return this.http.post<Insight>(`${this.baseUrl}/api/insights`, request);
+  }
+
+  getHealthStatus(): Observable<HealthResponse> {
+    return this.http.get<HealthResponse>(`${this.baseUrl}/health`);
   }
 }

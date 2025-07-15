@@ -1,0 +1,25 @@
+.api-status-container {
+  border: 1px solid #e5e7eb;
+}
+
+.api-status-item {
+  padding: 16px;
+  border-radius: 8px;
+  background-color: #f9fafb;
+  border: 1px solid #e5e7eb;
+}
+
+.status-indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+  
+  &.healthy {
+    background-color: #10b981;
+  }
+  
+  &.error {
+    background-color: #ef4444;
+  }
+}

@@ -151,4 +151,23 @@ describe('ApiService', () => {
     const req = httpMock.expectOne(`${env.apiUrl}/api/insights`);
     req.flush(errorResponse, { status: 422, statusText: 'Unprocessable Entity' });
   });
+
+  it('should get health status successfully', () => {
+    const mockHealthResponse = {
+      status: 'healthy',
+      checks: {
+        backend: { status: 'healthy', message: 'Backend is running' },
+        tempo: { status: 'healthy', message: 'Tempo API is accessible' },
+        jira: { status: 'healthy', message: 'JIRA API is accessible' }
+      }
+    };
+
+    service.getHealthStatus().subscribe(response => {
+      expect(response).toEqual(mockHealthResponse);
+    });
+
+    const req = httpMock.expectOne(`${env.apiUrl}/health`);
+    expect(req.request.method).toBe('GET');
+    req.flush(mockHealthResponse);
+  });
 });
