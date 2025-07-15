@@ -1,37 +1,11 @@
 # Team Resource Management System - MVP Tasks
 
 ## MVP Scope
+
 Simple Angular application with TailwindCSS that allows users to query AI for team resource insights with template questions. Single page with query input and insight display.
 
-## Frontend Tasks (Angular + TailwindCSS)
-
-### 1. Project Setup
-- [x] Create Angular project structure in `fe/` directory
-- [x] Install and configure TailwindCSS
-- [x] Set up TypeScript configuration
-- [x] Set up environment configuration files
-- [x] Set up ESLint with rules based on CLAUDE.md guidelines
-
-### 2. UI Components
-- [x] Create main layout component
-- [x] Build query input textarea component
-- [x] Create template question buttons component
-- [x] Design insight display component
-- [x] Add loading state indicators
-- [x] Implement responsive design with TailwindCSS
-
-### 3. Template Questions
-- [x] Implement template question: "Team availability next sprint?"
-- [x] Implement template question: "Highest billability this month?"
-- [x] Add click handlers to populate query textarea
-
-### 4. API Integration
-- [x] Create Angular service for backend communication
-- [x] Implement HTTP client configuration
-- [x] Add error handling for API calls
-- [x] Create data models/interfaces for API responses
-
 ### 5. State Management
+
 - [ ] Implement query state management
 - [ ] Handle loading states
 - [ ] Manage insight display state
@@ -40,38 +14,44 @@ Simple Angular application with TailwindCSS that allows users to query AI for te
 ## Backend Tasks (Fastify + TypeScript)
 
 ### 6. API Setup
+
 - [x] Create Fastify server in `be/` directory
 - [x] Set up TypeScript configuration for backend
 - [x] Configure CORS plugin for frontend communication
 - [x] Set up environment variables handling with @fastify/env
 
 ### 7. Tempo API Integration (Post-Mock Implementation)
+
 - [ ] Implement Tempo Planner API client
 - [ ] Implement Tempo Time Logs API client
 - [ ] Add API authentication handling
 - [ ] Create TypeScript interfaces for Tempo responses
 
 ### 8. Jira API Integration (Post-Mock Implementation)
+
 - [ ] Implement Jira API client using existing credentials
 - [ ] Add team member data retrieval
 - [ ] Implement project data fetching
 - [ ] Handle API rate limiting with simple retry logic
 
 ### 9. Data Processing Engine (Post-Mock Implementation)
+
 - [ ] Create availability calculation service
 - [ ] Implement billability metrics calculator
 - [ ] Build team data aggregation logic
 - [ ] Add simple in-memory caching
 
 ### 10. AI Integration (Post-Mock Implementation)
+
 - [ ] Set up OpenAI/Claude client
 - [ ] Create prompt templates for resource insights
 - [ ] Implement query processing logic
 - [ ] Add natural language response generation
 
 ### 11. API Endpoints (Mock First Approach)
+
 - [x] Create `POST /api/insights` endpoint with realistic mock responses
-- [x] Implement query validation using Fastify schemas  
+- [x] Implement query validation using Fastify schemas
 - [x] Add response formatting for both template questions
 - [x] Include error handling and logging
 - [ ] Replace mocks with real data processing (after FE is complete)
@@ -79,18 +59,21 @@ Simple Angular application with TailwindCSS that allows users to query AI for te
 ## Infrastructure & DevOps
 
 ### 12. Development Environment
+
 - [x] Set up package.json for both fe/ and be/
 - [x] Configure development scripts (npm run dev)
 - [ ] Set up concurrent development servers
 - [x] Add nodemon for backend hot reload
 
 ### 13. Security
+
 - [x] Implement secure credential management (.env files)
 - [x] Add input validation with Fastify schemas
 - [x] Configure rate limiting plugin
 - [x] Add basic CORS configuration
 
 ### 14. Testing
+
 - [x] Set up Jest for backend unit tests
 - [x] Set up Jest for frontend tests (replaced Karma/Jasmine)
 - [x] Create integration tests for API endpoints
@@ -98,12 +81,14 @@ Simple Angular application with TailwindCSS that allows users to query AI for te
 - [ ] Add basic e2e testing setup
 
 ### 15. Deployment
+
 - [ ] Configure build scripts for both apps
 - [ ] Set up production environment variables
 - [ ] Create deployment documentation
 - [ ] Test deployment process
 
 ## MVP User Flow
+
 1. User visits single page Angular application
 2. User sees query textarea and two template question buttons
 3. User clicks template question OR types custom query
@@ -114,6 +99,7 @@ Simple Angular application with TailwindCSS that allows users to query AI for te
 8. User can submit new queries
 
 ## Development Strategy: Mock First
+
 - **Phase 1**: Create mock `/api/insights` endpoint with realistic responses
 - **Phase 2**: Build Angular frontend against mocks (parallel development)
 - **Phase 3**: Implement real Tempo/Jira/AI integration
@@ -122,6 +108,7 @@ Simple Angular application with TailwindCSS that allows users to query AI for te
 ## Technical Architecture (MVP)
 
 ### Frontend (Angular)
+
 ```
 src/
 ├── app/
@@ -136,6 +123,7 @@ src/
 ```
 
 ### Backend (Fastify)
+
 ```
 src/
 ├── plugins/
@@ -154,12 +142,14 @@ src/
 ## Dependencies
 
 ### Frontend
+
 - Angular 17+
 - TailwindCSS
 - Angular HTTP Client
 - RxJS
 
-### Backend  
+### Backend
+
 - Fastify 4+
 - @fastify/cors
 - @fastify/env
@@ -168,6 +158,7 @@ src/
 - axios (for API calls)
 
 ## Success Criteria for MVP
+
 - [ ] Application loads and displays correctly
 - [ ] Template questions populate textarea when clicked
 - [ ] Custom queries can be submitted
@@ -179,6 +170,7 @@ src/
 - [ ] Response time under 10 seconds for insights
 
 ## Future Enhancements (Post-MVP)
+
 - Add MCP layer for advanced AI agent capabilities
 - Multiple page navigation
 - Historical data visualization
