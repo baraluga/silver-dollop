@@ -41,11 +41,7 @@ export async function buildServer(): Promise<FastifyInstance> {
   
   // Register routes
   await fastify.register(require('./routes/insights'))
-  
-  // Health check route
-  fastify.get('/health', async () => {
-    return { status: 'ok', timestamp: new Date().toISOString() }
-  })
+  await fastify.register(require('./routes/health'))
 
   return fastify
 }

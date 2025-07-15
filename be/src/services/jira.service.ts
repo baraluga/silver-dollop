@@ -69,4 +69,16 @@ export class JiraService {
   private delay(ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
+
+  async getUserData(): Promise<unknown> {
+    const response = await axios.get(`${this.baseUrl}/rest/api/3/myself`, {
+      headers: {
+        'Authorization': `Basic ${this.auth}`
+      }
+    });
+
+    return response.data;
+  }
 }
+
+export const jiraService = new JiraService();

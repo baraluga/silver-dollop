@@ -26,4 +26,16 @@ export class TempoService {
 
     return response.data.results;
   }
+
+  async getTeamData(): Promise<unknown> {
+    const response = await axios.get(`${this.baseUrl}/teams`, {
+      headers: {
+        'Authorization': `Bearer ${this.token}`
+      }
+    });
+
+    return response.data;
+  }
 }
+
+export const tempoService = new TempoService();
