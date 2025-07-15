@@ -1,6 +1,25 @@
 import { buildServer } from './server'
 import { FastifyInstance } from 'fastify'
 
+// Mock external services
+jest.mock('./services/tempo.service', () => ({
+  tempoService: {
+    getTeamData: jest.fn().mockResolvedValue({})
+  }
+}))
+
+jest.mock('./services/jira.service', () => ({
+  jiraService: {
+    getUserData: jest.fn().mockResolvedValue({})
+  }
+}))
+
+jest.mock('./services/gemini.service', () => ({
+  GeminiService: jest.fn().mockImplementation(() => ({
+    generateInsights: jest.fn().mockResolvedValue('Test insight')
+  }))
+}))
+
 describe('Server', () => {
   let app: FastifyInstance
 

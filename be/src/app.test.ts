@@ -5,6 +5,25 @@ import { FastifyInstance } from 'fastify'
 process.env.PORT = '3001'
 process.env.NODE_ENV = 'test'
 
+// Mock external services
+jest.mock('./services/tempo.service', () => ({
+  tempoService: {
+    getTeamData: jest.fn().mockResolvedValue({})
+  }
+}))
+
+jest.mock('./services/jira.service', () => ({
+  jiraService: {
+    getUserData: jest.fn().mockResolvedValue({})
+  }
+}))
+
+jest.mock('./services/gemini.service', () => ({
+  GeminiService: jest.fn().mockImplementation(() => ({
+    generateInsights: jest.fn().mockResolvedValue('Test insight')
+  }))
+}))
+
 describe('App', () => {
   let app: FastifyInstance
 
