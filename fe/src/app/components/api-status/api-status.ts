@@ -26,6 +26,8 @@ interface HealthResponse {
 })
 export class ApiStatusComponent implements OnInit {
   healthStatus: HealthResponse | null = null;
+  isLoading = true;
+  isConfirmedHealthy = false;
 
   constructor(private apiService: ApiService) {}
 
@@ -34,14 +36,31 @@ export class ApiStatusComponent implements OnInit {
   }
 
   private loadHealthStatus(): void {
+    this.isLoading = true;
     this.apiService.getHealthStatus().subscribe({
       next: (response) => {
-        this.healthStatus = response;
+        this.handleHealthResponse(response);
       },
       error: (error) => {
-        console.error('Error loading health status:', error);
+        this.handleLoadingError(error);
       }
     });
+  }
+
+  private handleHealthResponse(response: HealthResponse): void {
+    this.healthStatus = response;
+    this.isLoading = false;
+    this.checkConfirmedHealth();
+  }
+
+  private handleLoadingError(error: unknown): void {
+    console.error('Error loading health status:', error);
+    this.isLoading = false;
+  }
+
+  private checkConfirmedHealth(): void {
+    if (!this.healthStatus) return;
+    this.isConfirmedHealthy = this.healthStatus.status === 'healthy';
   }
 
   isHealthy(service: keyof HealthResponse['checks']): boolean {

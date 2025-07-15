@@ -6,8 +6,10 @@
         <!-- Backend Status -->
         <div class="flex items-center space-x-1">
           <div class="status-dot" 
-               [class.healthy]="isHealthy('backend')"
-               [class.error]="!isHealthy('backend')">
+               [class.loading]="isLoading"
+               [class.healthy]="!isLoading && isHealthy('backend')"
+               [class.error]="!isLoading && !isHealthy('backend')"
+               [class.pulse]="!isLoading && isConfirmedHealthy && isHealthy('backend')">
           </div>
           <span class="text-xs text-gray-600">BE</span>
         </div>
@@ -15,8 +17,10 @@
         <!-- Tempo Status -->
         <div class="flex items-center space-x-1">
           <div class="status-dot" 
-               [class.healthy]="isHealthy('tempo')"
-               [class.error]="!isHealthy('tempo')">
+               [class.loading]="isLoading"
+               [class.healthy]="!isLoading && isHealthy('tempo')"
+               [class.error]="!isLoading && !isHealthy('tempo')"
+               [class.pulse]="!isLoading && isConfirmedHealthy && isHealthy('tempo')">
           </div>
           <span class="text-xs text-gray-600">Tempo</span>
         </div>
@@ -24,8 +28,10 @@
         <!-- JIRA Status -->
         <div class="flex items-center space-x-1">
           <div class="status-dot" 
-               [class.healthy]="isHealthy('jira')"
-               [class.error]="!isHealthy('jira')">
+               [class.loading]="isLoading"
+               [class.healthy]="!isLoading && isHealthy('jira')"
+               [class.error]="!isLoading && !isHealthy('jira')"
+               [class.pulse]="!isLoading && isConfirmedHealthy && isHealthy('jira')">
           </div>
           <span class="text-xs text-gray-600">JIRA</span>
         </div>
@@ -33,8 +39,10 @@
         <!-- Gemini Status -->
         <div class="flex items-center space-x-1">
           <div class="status-dot" 
-               [class.healthy]="isHealthy('gemini')"
-               [class.error]="!isHealthy('gemini')">
+               [class.loading]="isLoading"
+               [class.healthy]="!isLoading && isHealthy('gemini')"
+               [class.error]="!isLoading && !isHealthy('gemini')"
+               [class.pulse]="!isLoading && isConfirmedHealthy && isHealthy('gemini')">
           </div>
           <span class="text-xs text-gray-600">AI</span>
         </div>
@@ -42,7 +50,7 @@
     </div>
     
     <!-- Error Messages (only show if there are errors) -->
-    <div *ngIf="hasErrors()" class="text-xs text-red-600">
+    <div *ngIf="!isLoading && hasErrors()" class="text-xs text-red-600">
       <span *ngIf="!isHealthy('tempo')">Check Tempo token</span>
       <span *ngIf="!isHealthy('jira')">Check JIRA token</span>
       <span *ngIf="!isHealthy('gemini')">Check AI key</span>

@@ -8,11 +8,40 @@
   border-radius: 50%;
   display: inline-block;
   
+  &.loading {
+    background-color: #9ca3af;
+    animation: loading-pulse 1.5s ease-in-out infinite;
+  }
+  
   &.healthy {
     background-color: #10b981;
   }
   
   &.error {
     background-color: #ef4444;
+  }
+  
+  &.pulse {
+    animation: confirmed-pulse 2s ease-in-out infinite;
+  }
+}
+
+@keyframes loading-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes confirmed-pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.1);
   }
 }

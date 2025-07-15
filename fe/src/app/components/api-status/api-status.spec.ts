@@ -126,4 +126,69 @@ describe('ApiStatusComponent', () => {
     
     expect(component.getStatusMessage('tempo')).toBe('');
   });
+
+  it('should start with loading state', () => {
+    expect(component.isLoading).toBe(true);
+    expect(component.isConfirmedHealthy).toBe(false);
+  });
+
+  it('should set loading to false after successful health check', () => {
+    const healthyResponse = {
+      status: 'healthy',
+      checks: {
+        backend: { status: 'healthy', message: 'Backend is running' },
+        tempo: { status: 'healthy', message: 'Tempo API is accessible' },
+        jira: { status: 'healthy', message: 'JIRA API is accessible' },
+        gemini: { status: 'healthy', message: 'Gemini AI is accessible' }
+      }
+    };
+
+    mockApiService.getHealthStatus.mockReturnValue(of(healthyResponse));
+
+    fixture.detectChanges();
+
+    expect(component.isLoading).toBe(false);
+    expect(component.isConfirmedHealthy).toBe(true);
+  });
+
+  it('should set loading to false after error', () => {
+    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+    const error = new Error('Network error');
+    
+    mockApiService.getHealthStatus.mockReturnValue(throwError(error));
+
+    fixture.detectChanges();
+
+    expect(component.isLoading).toBe(false);
+    expect(component.isConfirmedHealthy).toBe(false);
+    
+    consoleErrorSpy.mockRestore();
+  });
+
+  it('should set isConfirmedHealthy to false when status is degraded', () => {
+    const degradedResponse = {
+      status: 'degraded',
+      checks: {
+        backend: { status: 'healthy', message: 'Backend is running' },
+        tempo: { status: 'error', message: 'Tempo API connection failed' },
+        jira: { status: 'healthy', message: 'JIRA API is accessible' },
+        gemini: { status: 'healthy', message: 'Gemini AI is accessible' }
+      }
+    };
+
+    mockApiService.getHealthStatus.mockReturnValue(of(degradedResponse));
+
+    fixture.detectChanges();
+
+    expect(component.isLoading).toBe(false);
+    expect(component.isConfirmedHealthy).toBe(false);
+  });
+
+  it('should handle checkConfirmedHealth with null healthStatus', () => {
+    component.healthStatus = null;
+    
+    component['checkConfirmedHealth']();
+    
+    expect(component.isConfirmedHealthy).toBe(false);
+  });
 });
