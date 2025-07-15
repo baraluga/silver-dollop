@@ -15,14 +15,6 @@ Simple Angular application with TailwindCSS that allows users to query AI for te
 **Requirement**: The system should use a predefined "ideal billability ratio" constant as additional context when generating insights
 
 
-### 7. Tempo API Integration (Post-Mock Implementation)
-
-✅ **COMPLETED**
-
-### 8. Jira API Integration (Post-Mock Implementation)
-
-✅ **COMPLETED**
-
 ### 9. Data Processing Engine (Post-Mock Implementation)
 
 - [ ] Create availability calculation service
@@ -37,44 +29,11 @@ Simple Angular application with TailwindCSS that allows users to query AI for te
 - [ ] Implement query processing logic
 - [ ] Add natural language response generation
 
-### 11. API Endpoints (Mock First Approach)
-
-- [x] Create `POST /api/insights` endpoint with realistic mock responses
-- [x] Implement query validation using Fastify schemas
-- [x] Add response formatting for both template questions
-- [x] Include error handling and logging
-- [ ] Replace mocks with real data processing (after FE is complete)
-
 ## Infrastructure & DevOps
 
-### 12. Development Environment
-
-- [x] Set up package.json for both fe/ and be/
-- [x] Configure development scripts (npm run dev)
-- [ ] Set up concurrent development servers
-- [x] Add nodemon for backend hot reload
-
-### 13. Security
-
-- [x] Implement secure credential management (.env files)
-- [x] Add input validation with Fastify schemas
-- [x] Configure rate limiting plugin
-- [x] Add basic CORS configuration
-
 ### 14. Testing
-
-- [x] Set up Jest for backend unit tests
-- [x] Set up Jest for frontend tests (replaced Karma/Jasmine)
-- [x] Create integration tests for API endpoints
-- [x] Achieve 100% test coverage for frontend components
 - [ ] Add basic e2e testing setup
 
-### 15. Deployment
-
-- [ ] Configure build scripts for both apps
-- [ ] Set up production environment variables
-- [ ] Create deployment documentation
-- [ ] Test deployment process
 
 ## MVP User Flow
 
