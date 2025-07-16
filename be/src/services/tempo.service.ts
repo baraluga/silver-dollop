@@ -6,25 +6,38 @@ export class TempoService {
   private readonly token = process.env.TEMPO_API_TOKEN;
 
   async getPlans(from: string, to: string): Promise<TempoPlan[]> {
-    const response = await axios.get(`${this.baseUrl}/plans`, {
-      headers: {
-        'Authorization': `Bearer ${this.token}`
-      },
-      params: { from, to }
-    });
-
-    return response.data.results;
+    try {
+      const response = await this.makeRequest('/plans', { from, to });
+      return this.extractResults(response, 'plans') as TempoPlan[];
+    } catch (error) {
+      console.error('Error fetching Tempo plans:', error);
+      return [];
+    }
   }
 
   async getWorklogs(from: string, to: string): Promise<TempoWorklog[]> {
-    const response = await axios.get(`${this.baseUrl}/worklogs`, {
+    try {
+      const response = await this.makeRequest('/worklogs', { from, to });
+      return this.extractResults(response, 'worklogs') as TempoWorklog[];
+    } catch (error) {
+      console.error('Error fetching Tempo worklogs:', error);
+      return [];
+    }
+  }
+
+  private async makeRequest(endpoint: string, params: Record<string, string>) {
+    return axios.get(`${this.baseUrl}${endpoint}`, {
       headers: {
         'Authorization': `Bearer ${this.token}`
       },
-      params: { from, to }
+      params
     });
+  }
 
-    return response.data.results;
+  private extractResults(response: { data: { results?: unknown[] } }, type: string): unknown[] {
+    const results = response.data.results || [];
+    console.log(`Tempo ${type} API returned ${results.length} items`);
+    return results;
   }
 
   async getTeamData(): Promise<unknown> {

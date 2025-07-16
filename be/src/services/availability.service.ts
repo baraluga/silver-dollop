@@ -82,7 +82,7 @@ export class AvailabilityService {
   }
 
   private findUserInWorklogsOrDefault(userId: string, worklogs: TempoWorklog[]): string {
-    const userWorklog = worklogs.find(worklog => worklog.user.accountId === userId);
+    const userWorklog = worklogs.find(worklog => worklog.user?.accountId === userId);
     return this.getUserDisplayName(userWorklog);
   }
 
@@ -92,15 +92,24 @@ export class AvailabilityService {
   }
 
   private findUserInPlans(userId: string, plans: TempoPlan[]): string | null {
-    const userPlan = plans.find(plan => plan.user.accountId === userId);
-    return userPlan ? userPlan.user.displayName : null;
+    const userPlan = plans.find(plan => plan.user?.accountId === userId);
+    return userPlan?.user?.displayName ?? null;
   }
 
   private extractUniqueUserIds(plans: TempoPlan[], worklogs: TempoWorklog[]): string[] {
     const userIds = new Set<string>();
     
-    plans.forEach(plan => userIds.add(plan.user.accountId));
-    worklogs.forEach(worklog => userIds.add(worklog.user.accountId));
+    plans.forEach(plan => {
+      if (plan.user?.accountId) {
+        userIds.add(plan.user.accountId);
+      }
+    });
+    
+    worklogs.forEach(worklog => {
+      if (worklog.user?.accountId) {
+        userIds.add(worklog.user.accountId);
+      }
+    });
 
     return Array.from(userIds);
   }
