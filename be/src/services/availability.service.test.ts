@@ -194,5 +194,27 @@ describe('AvailabilityService', () => {
       expect(result.userId).toBe('user1');
       expect(result.userName).toBe('John Doe');
     });
+
+    it('should handle case where user has worklogs but no plans', () => {
+      const plans: TempoPlan[] = [];
+      const worklogs: TempoWorklog[] = [
+        {
+          id: '1',
+          user: { accountId: 'user1', displayName: 'John Doe' },
+          timeSpentSeconds: 21600,
+          billableSeconds: 21600,
+          startDate: '2024-01-01',
+          description: 'Work done'
+        }
+      ];
+
+      const result = availabilityService.calculateUserAvailability('user1', { plans, worklogs });
+
+      expect(result.plannedHours).toBe(0);
+      expect(result.actualHours).toBe(6);
+      expect(result.availabilityPercentage).toBe(0);
+      expect(result.userId).toBe('user1');
+      expect(result.userName).toBe('John Doe');
+    });
   });
 });

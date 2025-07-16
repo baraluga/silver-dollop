@@ -83,7 +83,12 @@ export class AvailabilityService {
 
   private findUserInWorklogsOrDefault(userId: string, worklogs: TempoWorklog[]): string {
     const userWorklog = worklogs.find(worklog => worklog.user.accountId === userId);
-    return userWorklog ? userWorklog.user.displayName : 'Unknown User';
+    return this.getUserDisplayName(userWorklog);
+  }
+
+  private getUserDisplayName(userWorklog: TempoWorklog | undefined): string {
+    if (!userWorklog) return 'Unknown User';
+    return userWorklog.user.displayName;
   }
 
   private findUserInPlans(userId: string, plans: TempoPlan[]): string | null {
