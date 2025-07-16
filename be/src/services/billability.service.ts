@@ -115,8 +115,9 @@ export class BillabilityService {
   }
 
   private addUserIdIfValid(user: { accountId?: string } | undefined, userIds: Set<string>): void {
-    if (!user?.accountId) return;
-    userIds.add(user.accountId);
+    if (user?.accountId) {
+      userIds.add(user.accountId);
+    }
   }
 
   private calculateAllUserBillabilities(userIds: string[], worklogs: TempoWorklog[]): UserBillability[] {

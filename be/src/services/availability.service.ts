@@ -87,8 +87,7 @@ export class AvailabilityService {
   }
 
   private getUserDisplayName(userWorklog: TempoWorklog | undefined): string {
-    if (!userWorklog) return 'Unknown User';
-    return userWorklog.user.displayName;
+    return userWorklog?.user?.displayName ?? 'Unknown User';
   }
 
   private findUserInPlans(userId: string, plans: TempoPlan[]): string | null {
@@ -97,8 +96,7 @@ export class AvailabilityService {
   }
 
   private extractDisplayName(userPlan: TempoPlan | undefined): string | null {
-    if (!userPlan) return null;
-    return userPlan.user?.displayName ?? null;
+    return userPlan?.user?.displayName ?? null;
   }
 
   private extractUniqueUserIds(plans: TempoPlan[], worklogs: TempoWorklog[]): string[] {
@@ -111,8 +109,9 @@ export class AvailabilityService {
   }
 
   private addUserIdIfValid(user: { accountId?: string } | undefined, userIds: Set<string>): void {
-    if (!user?.accountId) return;
-    userIds.add(user.accountId);
+    if (user?.accountId) {
+      userIds.add(user.accountId);
+    }
   }
 
   private calculateAllUserAvailabilities(userIds: string[], data: { plans: TempoPlan[]; worklogs: TempoWorklog[] }): UserAvailability[] {
