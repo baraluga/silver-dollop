@@ -1,6 +1,6 @@
-import { GoogleGenerativeAI, GenerativeModel } from '@google/generative-ai';
+import { GoogleGenerativeAI, GenerativeModel } from "@google/generative-ai";
 
-interface QueryContext {
+export interface QueryContext {
   availabilityData?: unknown;
   billabilityData?: unknown;
   [key: string]: unknown;
@@ -22,16 +22,19 @@ export class GeminiService {
 
   private getEnvKey(): string {
     const envKey = process.env.GEMINI_API_KEY;
-    if (!envKey) throw new Error('GEMINI_API_KEY is required');
+    if (!envKey) throw new Error("GEMINI_API_KEY is required");
     return envKey;
   }
 
   private initializeClient(key: string): void {
     this.genAI = new GoogleGenerativeAI(key);
-    this.model = this.genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+    this.model = this.genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
   }
 
-  async generateInsights(query: string, context: QueryContext): Promise<string> {
+  async generateInsights(
+    query: string,
+    context: QueryContext
+  ): Promise<string> {
     try {
       const prompt = this.buildPrompt(query, context);
       const result = await this.model.generateContent(prompt);

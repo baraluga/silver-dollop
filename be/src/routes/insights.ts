@@ -1,5 +1,5 @@
 import { FastifyInstance } from 'fastify'
-import { processQuery } from '../services/insightStrategy'
+import { processQueryWithAI } from '../services/aiInsightStrategy'
 
 // Request/Response schemas
 const insightRequestSchema = {
@@ -33,6 +33,6 @@ export default async function insightsRoutes(fastify: FastifyInstance) {
     }
   }, async (request) => {
     const { query } = request.body as { query: string }
-    return processQuery(query)
+    return processQueryWithAI(query)
   })
 }
