@@ -77,7 +77,7 @@ export class BillabilityService {
   }
 
   private filterUserWorklogs(userId: string, worklogs: TempoWorklog[]): TempoWorklog[] {
-    return worklogs.filter(worklog => worklog.user.accountId === userId);
+    return worklogs.filter(worklog => worklog.user?.accountId === userId);
   }
 
   private calculateTotalHours(worklogs: TempoWorklog[]): number {
@@ -104,14 +104,19 @@ export class BillabilityService {
   }
 
   private extractUserName(userId: string, worklogs: TempoWorklog[]): string {
-    const userWorklog = worklogs.find(worklog => worklog.user.accountId === userId);
-    return userWorklog ? userWorklog.user.displayName : 'Unknown User';
+    const userWorklog = worklogs.find(worklog => worklog.user?.accountId === userId);
+    return userWorklog?.user?.displayName ?? 'Unknown User';
   }
 
   private extractUniqueUserIds(worklogs: TempoWorklog[]): string[] {
     const userIds = new Set<string>();
-    worklogs.forEach(worklog => userIds.add(worklog.user.accountId));
+    worklogs.forEach(worklog => this.addUserIdIfValid(worklog.user, userIds));
     return Array.from(userIds);
+  }
+
+  private addUserIdIfValid(user: { accountId?: string } | undefined, userIds: Set<string>): void {
+    if (!user?.accountId) return;
+    userIds.add(user.accountId);
   }
 
   private calculateAllUserBillabilities(userIds: string[], worklogs: TempoWorklog[]): UserBillability[] {

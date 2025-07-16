@@ -37,6 +37,7 @@ export class TempoService {
   private extractResults(response: { data: { results?: unknown[] } }, type: string): unknown[] {
     const results = response.data.results || [];
     console.log(`Tempo ${type} API returned ${results.length} items`);
+    console.log(`First item structure:`, results[0] ? JSON.stringify(results[0], null, 2) : 'No items');
     return results;
   }
 

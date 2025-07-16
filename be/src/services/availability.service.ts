@@ -48,11 +48,11 @@ export class AvailabilityService {
   }
 
   private filterUserPlans(userId: string, plans: TempoPlan[]): TempoPlan[] {
-    return plans.filter(plan => plan.user.accountId === userId);
+    return plans.filter(plan => plan.user?.accountId === userId);
   }
 
   private filterUserWorklogs(userId: string, worklogs: TempoWorklog[]): TempoWorklog[] {
-    return worklogs.filter(worklog => worklog.user.accountId === userId);
+    return worklogs.filter(worklog => worklog.user?.accountId === userId);
   }
 
   private calculatePlannedHours(plans: TempoPlan[]): number {
@@ -93,25 +93,26 @@ export class AvailabilityService {
 
   private findUserInPlans(userId: string, plans: TempoPlan[]): string | null {
     const userPlan = plans.find(plan => plan.user?.accountId === userId);
-    return userPlan?.user?.displayName ?? null;
+    return this.extractDisplayName(userPlan);
+  }
+
+  private extractDisplayName(userPlan: TempoPlan | undefined): string | null {
+    if (!userPlan) return null;
+    return userPlan.user?.displayName ?? null;
   }
 
   private extractUniqueUserIds(plans: TempoPlan[], worklogs: TempoWorklog[]): string[] {
     const userIds = new Set<string>();
     
-    plans.forEach(plan => {
-      if (plan.user?.accountId) {
-        userIds.add(plan.user.accountId);
-      }
-    });
-    
-    worklogs.forEach(worklog => {
-      if (worklog.user?.accountId) {
-        userIds.add(worklog.user.accountId);
-      }
-    });
+    plans.forEach(plan => this.addUserIdIfValid(plan.user, userIds));
+    worklogs.forEach(worklog => this.addUserIdIfValid(worklog.user, userIds));
 
     return Array.from(userIds);
+  }
+
+  private addUserIdIfValid(user: { accountId?: string } | undefined, userIds: Set<string>): void {
+    if (!user?.accountId) return;
+    userIds.add(user.accountId);
   }
 
   private calculateAllUserAvailabilities(userIds: string[], data: { plans: TempoPlan[]; worklogs: TempoWorklog[] }): UserAvailability[] {
