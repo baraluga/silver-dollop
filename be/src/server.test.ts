@@ -3,9 +3,11 @@ import { FastifyInstance } from 'fastify'
 
 // Mock external services
 jest.mock('./services/tempo.service', () => ({
-  tempoService: {
+  TempoService: jest.fn().mockImplementation(() => ({
+    getPlans: jest.fn().mockResolvedValue([]),
+    getWorklogs: jest.fn().mockResolvedValue([]),
     getTeamData: jest.fn().mockResolvedValue({})
-  }
+  }))
 }))
 
 jest.mock('./services/jira.service', () => ({
@@ -16,8 +18,17 @@ jest.mock('./services/jira.service', () => ({
 
 jest.mock('./services/gemini.service', () => ({
   GeminiService: jest.fn().mockImplementation(() => ({
-    generateInsights: jest.fn().mockResolvedValue('Test insight')
+    generateInsights: jest.fn().mockResolvedValue('{"title":"Test","summary":"Test","insights":["Test"]}')
   }))
+}))
+
+jest.mock('./services/aiInsightStrategy', () => ({
+  processQueryWithAI: jest.fn().mockResolvedValue({
+    title: 'Test AI Insight',
+    summary: 'Test summary',
+    insights: ['Test insight'],
+    timestamp: '2024-01-01T00:00:00.000Z'
+  })
 }))
 
 describe('Server', () => {
