@@ -137,4 +137,62 @@ describe('AvailabilityService', () => {
       expect(result.userAvailabilities).toHaveLength(0);
     });
   });
+
+  describe('calculateUserAvailability', () => {
+    it('should handle case where user has no plans or worklogs', () => {
+      const plans: TempoPlan[] = [];
+      const worklogs: TempoWorklog[] = [];
+
+      const result = availabilityService.calculateUserAvailability('user1', { plans, worklogs });
+
+      expect(result.plannedHours).toBe(0);
+      expect(result.actualHours).toBe(0);
+      expect(result.availabilityPercentage).toBe(0);
+      expect(result.userId).toBe('user1');
+      expect(result.userName).toBe('Unknown User');
+    });
+
+    it('should handle case where user not found in worklogs', () => {
+      const plans: TempoPlan[] = [];
+      const worklogs: TempoWorklog[] = [
+        {
+          id: '1',
+          user: { accountId: 'user2', displayName: 'Jane Smith' },
+          timeSpentSeconds: 21600,
+          billableSeconds: 21600,
+          startDate: '2024-01-01',
+          description: 'Work done'
+        }
+      ];
+
+      const result = availabilityService.calculateUserAvailability('user1', { plans, worklogs });
+
+      expect(result.plannedHours).toBe(0);
+      expect(result.actualHours).toBe(0);
+      expect(result.availabilityPercentage).toBe(0);
+      expect(result.userId).toBe('user1');
+      expect(result.userName).toBe('Unknown User');
+    });
+
+    it('should handle case where user has plans but no worklogs', () => {
+      const plans: TempoPlan[] = [
+        {
+          id: '1',
+          user: { accountId: 'user1', displayName: 'John Doe' },
+          plannedSeconds: 28800,
+          startDate: '2024-01-01',
+          endDate: '2024-01-01'
+        }
+      ];
+      const worklogs: TempoWorklog[] = [];
+
+      const result = availabilityService.calculateUserAvailability('user1', { plans, worklogs });
+
+      expect(result.plannedHours).toBe(8);
+      expect(result.actualHours).toBe(0);
+      expect(result.availabilityPercentage).toBe(0);
+      expect(result.userId).toBe('user1');
+      expect(result.userName).toBe('John Doe');
+    });
+  });
 });

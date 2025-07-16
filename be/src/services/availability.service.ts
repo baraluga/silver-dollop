@@ -82,18 +82,13 @@ export class AvailabilityService {
   }
 
   private findUserInWorklogsOrDefault(userId: string, worklogs: TempoWorklog[]): string {
-    const userWorklog = this.findUserInWorklogs(userId, worklogs);
-    return userWorklog || 'Unknown User';
+    const userWorklog = worklogs.find(worklog => worklog.user.accountId === userId);
+    return userWorklog ? userWorklog.user.displayName : 'Unknown User';
   }
 
   private findUserInPlans(userId: string, plans: TempoPlan[]): string | null {
     const userPlan = plans.find(plan => plan.user.accountId === userId);
     return userPlan ? userPlan.user.displayName : null;
-  }
-
-  private findUserInWorklogs(userId: string, worklogs: TempoWorklog[]): string | null {
-    const userWorklog = worklogs.find(worklog => worklog.user.accountId === userId);
-    return userWorklog ? userWorklog.user.displayName : null;
   }
 
   private extractUniqueUserIds(plans: TempoPlan[], worklogs: TempoWorklog[]): string[] {

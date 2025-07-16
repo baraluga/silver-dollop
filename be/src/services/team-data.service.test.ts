@@ -107,6 +107,13 @@ describe('TeamDataService', () => {
       await expect(teamDataService.getTeamInsights({ from: '2024-01-01', to: '2024-01-01' }))
         .rejects.toThrow('Failed to fetch tempo data: Tempo API error');
     });
+
+    it('should handle unknown error types', async () => {
+      mockTempoService.getPlans.mockRejectedValue('Unknown error string');
+
+      await expect(teamDataService.getTeamInsights({ from: '2024-01-01', to: '2024-01-01' }))
+        .rejects.toThrow('Failed to fetch tempo data: Unknown error');
+    });
   });
 
   describe('getUserInsights', () => {
