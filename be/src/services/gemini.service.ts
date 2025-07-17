@@ -46,12 +46,14 @@ export class GeminiService {
   }
 
   private buildPrompt(query: string, context: QueryContext): string {
+    const contextString = JSON.stringify(context, null, 2);
+    
     return `
 You are a team resource management assistant. Based on the following query and context, provide insights about team availability and billability.
 
 Query: ${query}
 
-Context: ${JSON.stringify(context, null, 2)}
+Context: ${contextString}
 
 IMPORTANT: You must respond with valid JSON in exactly this format:
 {

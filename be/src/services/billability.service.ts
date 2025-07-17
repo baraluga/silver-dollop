@@ -1,4 +1,4 @@
-import { TempoWorklog } from '../types/tempo.interfaces';
+import { TempoWorklog, TempoUser } from '../types/tempo.interfaces';
 import { getBillabilityConfig } from '../config/billability.config';
 import { nullSafe } from '../util/null-safe';
 
@@ -47,7 +47,6 @@ export class BillabilityService {
   calculateTeamBillability(worklogs: TempoWorklog[]): TeamBillability {
     const userIds = this.extractUniqueUserIds(worklogs);
     const userBillabilities = this.calculateAllUserBillabilities(userIds, worklogs);
-
     const totalHours = this.sumTotalHours(userBillabilities);
     const billableHours = this.sumBillableHours(userBillabilities);
     const nonBillableHours = this.calculateNonBillableHours(totalHours, billableHours);
@@ -78,7 +77,11 @@ export class BillabilityService {
   }
 
   private filterUserWorklogs(userId: string, worklogs: TempoWorklog[]): TempoWorklog[] {
-    return worklogs.filter(worklog => worklog.user?.accountId === userId);
+    return worklogs.filter(worklog => this.matchesUserId(worklog.author, userId));
+  }
+
+  private matchesUserId(user: TempoUser | undefined, userId: string): boolean {
+    return this.getUserId(user) === userId;
   }
 
   private calculateTotalHours(worklogs: TempoWorklog[]): number {
@@ -105,21 +108,26 @@ export class BillabilityService {
   }
 
   private extractUserName(userId: string, worklogs: TempoWorklog[]): string {
-    const userWorklog = worklogs.find(worklog => worklog.user?.accountId === userId);
-    return nullSafe.string(userWorklog?.user?.displayName, 'Unknown User');
+    const userWorklog = worklogs.find(worklog => this.matchesUserId(worklog.author, userId));
+    return nullSafe.string(userWorklog?.author?.displayName, 'Unknown User');
   }
 
   private extractUniqueUserIds(worklogs: TempoWorklog[]): string[] {
     const userIds = new Set<string>();
-    worklogs.forEach(worklog => this.addUserIdIfValid(worklog.user, userIds));
+    worklogs.forEach(worklog => this.addUserIdIfValid(worklog.author, userIds));
     return Array.from(userIds);
   }
 
-  private addUserIdIfValid(user: { accountId?: string } | undefined, userIds: Set<string>): void {
-    const accountId = user?.accountId;
+  private addUserIdIfValid(user: { accountId?: string; id?: string } | undefined, userIds: Set<string>): void {
+    const accountId = this.getUserId(user);
     if (accountId) {
       userIds.add(accountId);
     }
+  }
+
+  private getUserId(user: { accountId?: string; id?: string } | undefined): string | undefined {
+    if (!user) return undefined;
+    return user.accountId || user.id;
   }
 
   private calculateAllUserBillabilities(userIds: string[], worklogs: TempoWorklog[]): UserBillability[] {

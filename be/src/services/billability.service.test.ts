@@ -13,7 +13,7 @@ describe('BillabilityService', () => {
       const worklogs: TempoWorklog[] = [
         {
           id: '1',
-          user: { accountId: 'user1', displayName: 'John Doe' },
+          author: { accountId: 'user1', displayName: 'John Doe' },
           timeSpentSeconds: 28800, // 8 hours
           billableSeconds: 21600, // 6 hours
           startDate: '2024-01-01',
@@ -44,7 +44,7 @@ describe('BillabilityService', () => {
       const worklogs: TempoWorklog[] = [
         {
           id: '1',
-          user: { accountId: 'user1', displayName: 'John Doe' },
+          author: { accountId: 'user1', displayName: 'John Doe' },
           timeSpentSeconds: 28800, // 8 hours
           billableSeconds: 0, // 0 hours
           startDate: '2024-01-01',
@@ -66,7 +66,7 @@ describe('BillabilityService', () => {
       const worklogs: TempoWorklog[] = [
         {
           id: '1',
-          user: { accountId: 'user1', displayName: 'John Doe' },
+          author: { accountId: 'user1', displayName: 'John Doe' },
           timeSpentSeconds: 28800, // 8 hours
           billableSeconds: 21600, // 6 hours
           startDate: '2024-01-01',
@@ -74,7 +74,7 @@ describe('BillabilityService', () => {
         },
         {
           id: '2',
-          user: { accountId: 'user2', displayName: 'Jane Smith' },
+          author: { accountId: 'user2', displayName: 'Jane Smith' },
           timeSpentSeconds: 28800, // 8 hours
           billableSeconds: 28800, // 8 hours
           startDate: '2024-01-01',
@@ -109,7 +109,7 @@ describe('BillabilityService', () => {
       const worklogs: TempoWorklog[] = [
         {
           id: '1',
-          user: { accountId: 'user1', displayName: 'John Doe' },
+          author: { accountId: 'user1', displayName: 'John Doe' },
           timeSpentSeconds: 28800, // 8 hours
           billableSeconds: 21600, // 6 hours (75%)
           startDate: '2024-01-01',
@@ -129,7 +129,7 @@ describe('BillabilityService', () => {
       const worklogs: TempoWorklog[] = [
         {
           id: '1',
-          user: { accountId: 'user1', displayName: 'John Doe' },
+          author: { accountId: 'user1', displayName: 'John Doe' },
           timeSpentSeconds: 28800, // 8 hours
           billableSeconds: 14400, // 4 hours (50%)
           startDate: '2024-01-01',

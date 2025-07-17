@@ -45,8 +45,8 @@ describe('TeamDataService', () => {
       const mockPlans = [
         {
           id: '1',
-          user: { accountId: 'user1', displayName: 'John Doe' },
-          plannedSeconds: 28800,
+          assignee: { accountId: 'user1', displayName: 'John Doe' },
+          totalPlannedSecondsInScope: 28800,
           startDate: '2024-01-01',
           endDate: '2024-01-01'
         }
@@ -55,7 +55,7 @@ describe('TeamDataService', () => {
       const mockWorklogs = [
         {
           id: '1',
-          user: { accountId: 'user1', displayName: 'John Doe' },
+          author: { accountId: 'user1', displayName: 'John Doe' },
           timeSpentSeconds: 21600,
           billableSeconds: 16200,
           startDate: '2024-01-01',
@@ -121,8 +121,8 @@ describe('TeamDataService', () => {
       const mockPlans = [
         {
           id: '1',
-          user: { accountId: 'user1', displayName: 'John Doe' },
-          plannedSeconds: 28800,
+          assignee: { accountId: 'user1', displayName: 'John Doe' },
+          totalPlannedSecondsInScope: 28800,
           startDate: '2024-01-01',
           endDate: '2024-01-01'
         }
@@ -131,7 +131,7 @@ describe('TeamDataService', () => {
       const mockWorklogs = [
         {
           id: '1',
-          user: { accountId: 'user1', displayName: 'John Doe' },
+          author: { accountId: 'user1', displayName: 'John Doe' },
           timeSpentSeconds: 21600,
           billableSeconds: 16200,
           startDate: '2024-01-01',

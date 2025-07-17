@@ -340,4 +340,57 @@ describe('AI Insight Strategy', () => {
     expect(result.title).toBe('Filter Test');
     expect(result.insights).toEqual(['Valid insight', 'Another valid insight']);
   });
+
+  it('should detect empty context data and handle accordingly', async () => {
+    // Arrange
+    const query = 'What is team availability?';
+    const mockTeamInsights = {
+      availability: {
+        totalPlannedHours: 0,
+        totalActualHours: 0,
+        teamAvailabilityPercentage: 0,
+        userAvailabilities: []
+      },
+      billability: {
+        totalHours: 0,
+        billableHours: 0,
+        nonBillableHours: 0,
+        teamBillabilityPercentage: 0,
+        userBillabilities: []
+      },
+      trend: {
+        actualBillabilityPercentage: 0,
+        idealBillabilityPercentage: 75,
+        isOnTarget: false,
+        variance: -75
+      },
+      period: { from: '2024-01-01', to: '2024-01-07' }
+    };
+    const mockParsedInsights = {
+      title: 'Empty Data Analysis',
+      summary: 'No data available for analysis',
+      insights: ['No availability data found', 'No billability data found']
+    };
+    
+    mockTeamDataService.getTeamInsights.mockResolvedValue(mockTeamInsights);
+    mockGeminiService.prototype.generateInsights.mockResolvedValue(
+      JSON.stringify(mockParsedInsights)
+    );
+
+    // Act
+    const result = await processQueryWithAI(query);
+
+    // Assert
+    expect(mockGeminiService.prototype.generateInsights).toHaveBeenCalledWith(
+      query,
+      {
+        availabilityData: mockTeamInsights.availability,
+        billabilityData: mockTeamInsights.billability,
+        trend: mockTeamInsights.trend,
+        period: mockTeamInsights.period
+      }
+    );
+    expect(result.title).toBe('Empty Data Analysis');
+    expect(result.insights).toContain('No availability data found');
+  });
 });

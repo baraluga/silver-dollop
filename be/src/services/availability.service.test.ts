@@ -13,8 +13,8 @@ describe('AvailabilityService', () => {
       const plans: TempoPlan[] = [
         {
           id: '1',
-          user: { accountId: 'user1', displayName: 'John Doe' },
-          plannedSeconds: 28800, // 8 hours
+          assignee: { accountId: 'user1', displayName: 'John Doe' },
+          totalPlannedSecondsInScope: 28800, // 8 hours
           startDate: '2024-01-01',
           endDate: '2024-01-01'
         }
@@ -23,7 +23,7 @@ describe('AvailabilityService', () => {
       const worklogs: TempoWorklog[] = [
         {
           id: '1',
-          user: { accountId: 'user1', displayName: 'John Doe' },
+          author: { accountId: 'user1', displayName: 'John Doe' },
           timeSpentSeconds: 21600, // 6 hours
           billableSeconds: 21600,
           startDate: '2024-01-01',
@@ -53,8 +53,8 @@ describe('AvailabilityService', () => {
       const plans: TempoPlan[] = [
         {
           id: '1',
-          user: { accountId: 'user1', displayName: 'John Doe' },
-          plannedSeconds: 28800, // 8 hours
+          assignee: { accountId: 'user1', displayName: 'John Doe' },
+          totalPlannedSecondsInScope: 28800, // 8 hours
           startDate: '2024-01-01',
           endDate: '2024-01-01'
         }
@@ -84,15 +84,15 @@ describe('AvailabilityService', () => {
       const plans: TempoPlan[] = [
         {
           id: '1',
-          user: { accountId: 'user1', displayName: 'John Doe' },
-          plannedSeconds: 28800, // 8 hours
+          assignee: { accountId: 'user1', displayName: 'John Doe' },
+          totalPlannedSecondsInScope: 28800, // 8 hours
           startDate: '2024-01-01',
           endDate: '2024-01-01'
         },
         {
           id: '2',
-          user: { accountId: 'user2', displayName: 'Jane Smith' },
-          plannedSeconds: 28800, // 8 hours
+          assignee: { accountId: 'user2', displayName: 'Jane Smith' },
+          totalPlannedSecondsInScope: 28800, // 8 hours
           startDate: '2024-01-01',
           endDate: '2024-01-01'
         }
@@ -101,7 +101,7 @@ describe('AvailabilityService', () => {
       const worklogs: TempoWorklog[] = [
         {
           id: '1',
-          user: { accountId: 'user1', displayName: 'John Doe' },
+          author: { accountId: 'user1', displayName: 'John Doe' },
           timeSpentSeconds: 21600, // 6 hours
           billableSeconds: 21600,
           startDate: '2024-01-01',
@@ -109,7 +109,7 @@ describe('AvailabilityService', () => {
         },
         {
           id: '2',
-          user: { accountId: 'user2', displayName: 'Jane Smith' },
+          author: { accountId: 'user2', displayName: 'Jane Smith' },
           timeSpentSeconds: 28800, // 8 hours
           billableSeconds: 28800,
           startDate: '2024-01-01',
@@ -157,7 +157,7 @@ describe('AvailabilityService', () => {
       const worklogs: TempoWorklog[] = [
         {
           id: '1',
-          user: { accountId: 'user2', displayName: 'Jane Smith' },
+          author: { accountId: 'user2', displayName: 'Jane Smith' },
           timeSpentSeconds: 21600,
           billableSeconds: 21600,
           startDate: '2024-01-01',
@@ -178,8 +178,8 @@ describe('AvailabilityService', () => {
       const plans: TempoPlan[] = [
         {
           id: '1',
-          user: { accountId: 'user1', displayName: 'John Doe' },
-          plannedSeconds: 28800,
+          assignee: { accountId: 'user1', displayName: 'John Doe' },
+          totalPlannedSecondsInScope: 28800,
           startDate: '2024-01-01',
           endDate: '2024-01-01'
         }
@@ -200,7 +200,7 @@ describe('AvailabilityService', () => {
       const worklogs: TempoWorklog[] = [
         {
           id: '1',
-          user: { accountId: 'user1', displayName: 'John Doe' },
+          author: { accountId: 'user1', displayName: 'John Doe' },
           timeSpentSeconds: 21600,
           billableSeconds: 21600,
           startDate: '2024-01-01',

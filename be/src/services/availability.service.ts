@@ -1,4 +1,4 @@
-import { TempoPlan, TempoWorklog } from '../types/tempo.interfaces';
+import { TempoPlan, TempoWorklog, TempoUser } from '../types/tempo.interfaces';
 import { nullSafe } from '../util/null-safe';
 
 export interface UserAvailability {
@@ -36,7 +36,6 @@ export class AvailabilityService {
   calculateTeamAvailability(data: { plans: TempoPlan[]; worklogs: TempoWorklog[] }): TeamAvailability {
     const userIds = this.extractUniqueUserIds(data.plans, data.worklogs);
     const userAvailabilities = this.calculateAllUserAvailabilities(userIds, data);
-
     const totalPlannedHours = this.sumPlannedHours(userAvailabilities);
     const totalActualHours = this.sumActualHours(userAvailabilities);
 
@@ -49,15 +48,19 @@ export class AvailabilityService {
   }
 
   private filterUserPlans(userId: string, plans: TempoPlan[]): TempoPlan[] {
-    return plans.filter(plan => plan.user?.accountId === userId);
+    return plans.filter(plan => this.matchesUserId(plan.assignee, userId));
   }
 
   private filterUserWorklogs(userId: string, worklogs: TempoWorklog[]): TempoWorklog[] {
-    return worklogs.filter(worklog => worklog.user?.accountId === userId);
+    return worklogs.filter(worklog => this.matchesUserId(worklog.author, userId));
+  }
+
+  private matchesUserId(user: TempoUser | undefined, userId: string): boolean {
+    return this.getUserId(user) === userId;
   }
 
   private calculatePlannedHours(plans: TempoPlan[]): number {
-    const totalSeconds = plans.reduce((sum, plan) => sum + plan.plannedSeconds, 0);
+    const totalSeconds = plans.reduce((sum, plan) => sum + plan.totalPlannedSecondsInScope, 0);
     return this.convertSecondsToHours(totalSeconds);
   }
 
@@ -83,37 +86,42 @@ export class AvailabilityService {
   }
 
   private findUserInWorklogsOrDefault(userId: string, worklogs: TempoWorklog[]): string {
-    const userWorklog = worklogs.find(worklog => worklog.user?.accountId === userId);
+    const userWorklog = worklogs.find(worklog => this.matchesUserId(worklog.author, userId));
     return this.getUserDisplayName(userWorklog);
   }
 
   private getUserDisplayName(userWorklog: TempoWorklog | undefined): string {
-    return nullSafe.string(userWorklog?.user?.displayName, 'Unknown User');
+    return nullSafe.string(userWorklog?.author?.displayName, 'Unknown User');
   }
 
-  private findUserInPlans(userId: string, plans: TempoPlan[]): string | null {
-    const userPlan = plans.find(plan => plan.user?.accountId === userId);
+  private findUserInPlans(userId: string, plans: TempoPlan[]): string | undefined {
+    const userPlan = plans.find(plan => this.matchesUserId(plan.assignee, userId));
     return this.getDisplayNameFromPlan(userPlan);
   }
 
-  private getDisplayNameFromPlan(userPlan: TempoPlan | undefined): string | null {
-    return userPlan?.user?.displayName ?? null;
+  private getDisplayNameFromPlan(userPlan: TempoPlan | undefined): string | undefined {
+    return userPlan?.assignee?.displayName;
   }
 
   private extractUniqueUserIds(plans: TempoPlan[], worklogs: TempoWorklog[]): string[] {
     const userIds = new Set<string>();
     
-    plans.forEach(plan => this.addUserIdIfValid(plan.user, userIds));
-    worklogs.forEach(worklog => this.addUserIdIfValid(worklog.user, userIds));
+    plans.forEach(plan => this.addUserIdIfValid(plan.assignee, userIds));
+    worklogs.forEach(worklog => this.addUserIdIfValid(worklog.author, userIds));
 
     return Array.from(userIds);
   }
 
-  private addUserIdIfValid(user: { accountId?: string } | undefined, userIds: Set<string>): void {
-    const accountId = user?.accountId;
+  private addUserIdIfValid(user: { accountId?: string; id?: string } | undefined, userIds: Set<string>): void {
+    const accountId = this.getUserId(user);
     if (accountId) {
       userIds.add(accountId);
     }
+  }
+
+  private getUserId(user: { accountId?: string; id?: string } | undefined): string | undefined {
+    if (!user) return undefined;
+    return user.accountId || user.id;
   }
 
   private calculateAllUserAvailabilities(userIds: string[], data: { plans: TempoPlan[]; worklogs: TempoWorklog[] }): UserAvailability[] {

@@ -1,19 +1,20 @@
 export interface TempoUser {
-  accountId: string;
-  displayName: string;
+  accountId?: string;
+  id?: string;
+  displayName?: string;
 }
 
 export interface TempoPlan {
   id: string;
-  user: TempoUser;
-  plannedSeconds: number;
+  assignee: TempoUser;
+  totalPlannedSecondsInScope: number;
   startDate: string;
   endDate: string;
 }
 
 export interface TempoWorklog {
   id: string;
-  user: TempoUser;
+  author: TempoUser;
   timeSpentSeconds: number;
   billableSeconds: number;
   startDate: string;
