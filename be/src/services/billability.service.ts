@@ -32,23 +32,15 @@ export class BillabilityService {
     worklogs: TempoWorklog[],
   ): UserBillability {
     const userWorklogs = this.filterUserWorklogs(userId, worklogs);
-
-    const totalHours = this.calculateTotalHours(userWorklogs);
-    const billableHours = this.calculateBillableHours(userWorklogs);
-    const nonBillableHours = this.calculateNonBillableHours(
-      totalHours,
-      billableHours,
-    );
+    const hours = this.calculateHours(userWorklogs);
 
     return {
       userId,
       userName: this.extractUserName(userId, worklogs),
-      totalHours,
-      billableHours,
-      nonBillableHours,
+      ...hours,
       billabilityPercentage: this.calculatePercentage(
-        billableHours,
-        totalHours,
+        hours.billableHours,
+        hours.totalHours,
       ),
     };
   }
@@ -59,20 +51,13 @@ export class BillabilityService {
       userIds,
       worklogs,
     );
-    const totalHours = this.sumTotalHours(userBillabilities);
-    const billableHours = this.sumBillableHours(userBillabilities);
-    const nonBillableHours = this.calculateNonBillableHours(
-      totalHours,
-      billableHours,
-    );
+    const teamHours = this.aggregateTeamHours(userBillabilities);
 
     return {
-      totalHours,
-      billableHours,
-      nonBillableHours,
+      ...teamHours,
       teamBillabilityPercentage: this.calculatePercentage(
-        billableHours,
-        totalHours,
+        teamHours.billableHours,
+        teamHours.totalHours,
       ),
       userBillabilities,
     };
@@ -138,6 +123,28 @@ export class BillabilityService {
 
   private extractUniqueUserIds(worklogs: TempoWorklog[]): string[] {
     return TempoCommon.extractUniqueUserIds(worklogs);
+  }
+
+  private calculateHours(worklogs: TempoWorklog[]) {
+    const totalHours = this.calculateTotalHours(worklogs);
+    const billableHours = this.calculateBillableHours(worklogs);
+    const nonBillableHours = this.calculateNonBillableHours(
+      totalHours,
+      billableHours,
+    );
+
+    return { totalHours, billableHours, nonBillableHours };
+  }
+
+  private aggregateTeamHours(userBillabilities: UserBillability[]) {
+    const totalHours = this.sumTotalHours(userBillabilities);
+    const billableHours = this.sumBillableHours(userBillabilities);
+    const nonBillableHours = this.calculateNonBillableHours(
+      totalHours,
+      billableHours,
+    );
+
+    return { totalHours, billableHours, nonBillableHours };
   }
 
   private calculateAllUserBillabilities(
