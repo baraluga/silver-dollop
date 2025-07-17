@@ -1,5 +1,6 @@
 import { AvailabilityService } from './availability.service';
 import { TempoPlan, TempoWorklog } from '../types/tempo.interfaces';
+import { TestDataFactory } from '../util/test-data-factory';
 
 describe('AvailabilityService', () => {
   let availabilityService: AvailabilityService;
@@ -10,26 +11,8 @@ describe('AvailabilityService', () => {
 
   describe('calculateUserAvailability', () => {
     it('should calculate availability percentage for a user', () => {
-      const plans: TempoPlan[] = [
-        {
-          id: '1',
-          assignee: { accountId: 'user1', displayName: 'John Doe' },
-          totalPlannedSecondsInScope: 28800, // 8 hours
-          startDate: '2024-01-01',
-          endDate: '2024-01-01'
-        }
-      ];
-
-      const worklogs: TempoWorklog[] = [
-        {
-          id: '1',
-          author: { accountId: 'user1', displayName: 'John Doe' },
-          timeSpentSeconds: 21600, // 6 hours
-          billableSeconds: 21600,
-          startDate: '2024-01-01',
-          description: 'Work done'
-        }
-      ];
+      const plans: TempoPlan[] = [TestDataFactory.createTempoPlan()];
+      const worklogs: TempoWorklog[] = [TestDataFactory.createTempoWorklog()];
 
       const result = availabilityService.calculateUserAvailability('user1', { plans, worklogs });
 
@@ -50,16 +33,7 @@ describe('AvailabilityService', () => {
     });
 
     it('should handle user with no worklogs', () => {
-      const plans: TempoPlan[] = [
-        {
-          id: '1',
-          assignee: { accountId: 'user1', displayName: 'John Doe' },
-          totalPlannedSecondsInScope: 28800, // 8 hours
-          startDate: '2024-01-01',
-          endDate: '2024-01-01'
-        }
-      ];
-
+      const plans: TempoPlan[] = [TestDataFactory.createTempoPlan()];
       const worklogs: TempoWorklog[] = [];
 
       const result = availabilityService.calculateUserAvailability('user1', { plans, worklogs });
@@ -82,39 +56,27 @@ describe('AvailabilityService', () => {
   describe('calculateTeamAvailability', () => {
     it('should calculate team availability summary', () => {
       const plans: TempoPlan[] = [
-        {
-          id: '1',
-          assignee: { accountId: 'user1', displayName: 'John Doe' },
-          totalPlannedSecondsInScope: 28800, // 8 hours
-          startDate: '2024-01-01',
-          endDate: '2024-01-01'
-        },
-        {
+        TestDataFactory.createTempoPlan(),
+        TestDataFactory.createTempoPlan({
           id: '2',
-          assignee: { accountId: 'user2', displayName: 'Jane Smith' },
-          totalPlannedSecondsInScope: 28800, // 8 hours
-          startDate: '2024-01-01',
-          endDate: '2024-01-01'
-        }
+          assignee: TestDataFactory.createTempoUser({
+            accountId: 'user2',
+            displayName: 'Jane Smith'
+          })
+        })
       ];
 
       const worklogs: TempoWorklog[] = [
-        {
-          id: '1',
-          author: { accountId: 'user1', displayName: 'John Doe' },
-          timeSpentSeconds: 21600, // 6 hours
-          billableSeconds: 21600,
-          startDate: '2024-01-01',
-          description: 'Work done'
-        },
-        {
+        TestDataFactory.createTempoWorklog(),
+        TestDataFactory.createTempoWorklog({
           id: '2',
-          author: { accountId: 'user2', displayName: 'Jane Smith' },
+          author: TestDataFactory.createTempoUser({
+            accountId: 'user2',
+            displayName: 'Jane Smith'
+          }),
           timeSpentSeconds: 28800, // 8 hours
-          billableSeconds: 28800,
-          startDate: '2024-01-01',
-          description: 'Work done'
-        }
+          billableSeconds: 28800
+        })
       ];
 
       const result = availabilityService.calculateTeamAvailability({ plans, worklogs });
@@ -155,14 +117,12 @@ describe('AvailabilityService', () => {
     it('should handle case where user not found in worklogs', () => {
       const plans: TempoPlan[] = [];
       const worklogs: TempoWorklog[] = [
-        {
-          id: '1',
-          author: { accountId: 'user2', displayName: 'Jane Smith' },
-          timeSpentSeconds: 21600,
-          billableSeconds: 21600,
-          startDate: '2024-01-01',
-          description: 'Work done'
-        }
+        TestDataFactory.createTempoWorklog({
+          author: TestDataFactory.createTempoUser({
+            accountId: 'user2',
+            displayName: 'Jane Smith'
+          })
+        })
       ];
 
       const result = availabilityService.calculateUserAvailability('user1', { plans, worklogs });
@@ -175,15 +135,7 @@ describe('AvailabilityService', () => {
     });
 
     it('should handle case where user has plans but no worklogs', () => {
-      const plans: TempoPlan[] = [
-        {
-          id: '1',
-          assignee: { accountId: 'user1', displayName: 'John Doe' },
-          totalPlannedSecondsInScope: 28800,
-          startDate: '2024-01-01',
-          endDate: '2024-01-01'
-        }
-      ];
+      const plans: TempoPlan[] = [TestDataFactory.createTempoPlan()];
       const worklogs: TempoWorklog[] = [];
 
       const result = availabilityService.calculateUserAvailability('user1', { plans, worklogs });
@@ -197,16 +149,7 @@ describe('AvailabilityService', () => {
 
     it('should handle case where user has worklogs but no plans', () => {
       const plans: TempoPlan[] = [];
-      const worklogs: TempoWorklog[] = [
-        {
-          id: '1',
-          author: { accountId: 'user1', displayName: 'John Doe' },
-          timeSpentSeconds: 21600,
-          billableSeconds: 21600,
-          startDate: '2024-01-01',
-          description: 'Work done'
-        }
-      ];
+      const worklogs: TempoWorklog[] = [TestDataFactory.createTempoWorklog()];
 
       const result = availabilityService.calculateUserAvailability('user1', { plans, worklogs });
 

@@ -1,5 +1,5 @@
 import { TempoPlan, TempoUser, TempoWorklog } from "../types/tempo.interfaces";
-import { nullSafe } from "../util/null-safe";
+import { TempoCommon } from "../util/tempo-common";
 
 export interface UserAvailability {
   userId: string;
@@ -69,13 +69,11 @@ export class AvailabilityService {
     userId: string,
     worklogs: TempoWorklog[]
   ): TempoWorklog[] {
-    return worklogs.filter((worklog) =>
-      this.matchesUserId(worklog.author, userId)
-    );
+    return TempoCommon.filterUserWorklogs(userId, worklogs);
   }
 
   private matchesUserId(user: TempoUser | undefined, userId: string): boolean {
-    return nullSafe.object<TempoUser>(user).accountId === userId;
+    return TempoCommon.matchesUserId(user, userId);
   }
 
   private calculatePlannedHours(plans: TempoPlan[]): number {
@@ -95,12 +93,11 @@ export class AvailabilityService {
   }
 
   private convertSecondsToHours(seconds: number): number {
-    return Math.round((seconds / 3600) * 100) / 100;
+    return TempoCommon.convertSecondsToHours(seconds);
   }
 
   private calculatePercentage(actual: number, planned: number): number {
-    if (planned === 0) return 0;
-    return Math.round((actual / planned) * 100 * 100) / 100;
+    return TempoCommon.calculatePercentage(actual, planned);
   }
 
   private extractUserName(
@@ -117,15 +114,9 @@ export class AvailabilityService {
     userId: string,
     worklogs: TempoWorklog[]
   ): string {
-    const userWorklog = worklogs.find((worklog) =>
-      this.matchesUserId(worklog.author, userId)
-    );
-    return this.getUserDisplayName(userWorklog);
+    return TempoCommon.extractUserName(userId, worklogs);
   }
 
-  private getUserDisplayName(userWorklog: TempoWorklog | undefined): string {
-    return nullSafe.string(userWorklog?.author?.displayName, "Unknown User");
-  }
 
   private findUserInPlans(
     userId: string,
@@ -147,21 +138,9 @@ export class AvailabilityService {
     plans: TempoPlan[],
     worklogs: TempoWorklog[]
   ): string[] {
-    const userIds = new Set<string>();
-    plans.forEach((plan) => this.addUserIdIfValid(plan.assignee, userIds));
-    worklogs.forEach((worklog) =>
-      this.addUserIdIfValid(worklog.author, userIds)
-    );
-    return Array.from(userIds).filter(Boolean);
+    return TempoCommon.extractUniqueUserIdsFromPlansAndWorklogs(plans, worklogs);
   }
 
-  private addUserIdIfValid(
-    user: { accountId?: string; id?: string } | undefined,
-    userIds: Set<string>
-  ): void {
-    const accountId = nullSafe.object<{ accountId: string }>(user).accountId;
-    userIds.add(accountId);
-  }
 
   private calculateAllUserAvailabilities(
     userIds: string[],
