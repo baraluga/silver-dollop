@@ -10,8 +10,13 @@ function number(alleged: number | unknown, fallback = 0): number {
   return (alleged as number) ?? fallback;
 }
 
+function array<T>(alleged: T[] | unknown, fallback: T[] = []): T[] {
+  return (alleged as T[]) ?? fallback;
+}
+
 export const nullSafe = {
   string,
   object,
   number,
+  array,
 };

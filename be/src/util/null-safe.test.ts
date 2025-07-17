@@ -1,6 +1,19 @@
 import { nullSafe } from "./null-safe";
 
 describe("nullSafe", () => {
+  describe("checking for array...", () => {
+    it("should act as a passthrough if truthy", () => {
+      expect(nullSafe.array([1, 2, 3])).toEqual([1, 2, 3]);
+    });
+
+    it("should return an empty array if falsy", () => {
+      expect(nullSafe.array(undefined)).toEqual([]);
+    });
+
+    it("should return a fallback array if falsy", () => {
+      expect(nullSafe.array(undefined, [4, 5])).toEqual([4, 5]);
+    });
+  });
   describe("checking for string...", () => {
     it("should act as a passthrough if truthy", () => {
       expect(nullSafe.string("hello")).toBe("hello");
