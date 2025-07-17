@@ -1,4 +1,4 @@
-import { GoogleGenerativeAI, GenerativeModel } from "@google/generative-ai";
+import { GenerativeModel, GoogleGenerativeAI } from "@google/generative-ai";
 
 export interface QueryContext {
   availabilityData?: unknown;
@@ -35,19 +35,15 @@ export class GeminiService {
     query: string,
     context: QueryContext
   ): Promise<string> {
-    try {
-      const prompt = this.buildPrompt(query, context);
-      const result = await this.model.generateContent(prompt);
-      const response = result.response;
-      return response.text();
-    } catch (error) {
-      throw new Error(`Gemini API error: ${error}`);
-    }
+    const prompt = this.buildPrompt(query, context);
+    const result = await this.model.generateContent(prompt);
+    const response = result.response;
+    return response.text();
   }
 
   private buildPrompt(query: string, context: QueryContext): string {
     const contextString = JSON.stringify(context, null, 2);
-    
+
     return `
 You are a team resource management assistant. Based on the following query and context, provide insights about team availability and billability.
 
