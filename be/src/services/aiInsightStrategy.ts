@@ -1,4 +1,5 @@
 import { GeminiService, QueryContext } from "./gemini.service";
+import { jiraService } from "./jira.service";
 import { teamDataService, TeamInsights } from "./team-data.service";
 
 type InsightResponse = {
@@ -13,7 +14,7 @@ function getCurrentWeekPeriod() {
   const weekStart = new Date(
     now.getFullYear(),
     now.getMonth(),
-    now.getDate() - now.getDay(),
+    now.getDate() - now.getDay()
   );
   const weekEnd = new Date(weekStart);
   weekEnd.setDate(weekStart.getDate() + 6);
@@ -24,34 +25,61 @@ function getCurrentWeekPeriod() {
   };
 }
 
-function convertToQueryContext(teamData: TeamInsights): QueryContext {
+async function convertToQueryContext(
+  teamData: TeamInsights
+): Promise<QueryContext> {
   return {
     availabilityData: teamData.availability,
     billabilityData: teamData.billability,
     trend: teamData.trend,
     period: teamData.period,
-    userDirectory: buildUserDirectory(teamData),
+    userDirectory: await buildUserDirectory(teamData),
   };
 }
 
-function buildUserDirectory(teamData: TeamInsights): Record<string, string> {
+async function buildUserDirectory(
+  teamData: TeamInsights
+): Promise<Record<string, string>> {
+  const userIds = collectUniqueUserIds(teamData);
+  return await fetchUserNames(userIds);
+}
+
+function collectUniqueUserIds(teamData: TeamInsights): Set<string> {
+  const userIds = new Set<string>();
+
+  teamData.availability.userAvailabilities.forEach((user) => {
+    userIds.add(user.userId);
+  });
+
+  teamData.billability.userBillabilities.forEach((user) => {
+    userIds.add(user.userId);
+  });
+
+  return userIds;
+}
+
+async function fetchUserNames(
+  userIds: Set<string>
+): Promise<Record<string, string>> {
+  if (userIds.size === 0) return {};
+  return await fetchFromJira(userIds);
+}
+
+async function fetchFromJira(
+  userIds: Set<string>
+): Promise<Record<string, string>> {
   const userDirectory: Record<string, string> = {};
-  
-  // Extract users from availability data
-  teamData.availability.userAvailabilities.forEach(user => {
-    userDirectory[user.userId] = user.userName;
+  const users = await jiraService.getUsersByAccountIds(Array.from(userIds));
+
+  users.forEach((user) => {
+    userDirectory[user.accountId] = user.displayName;
   });
-  
-  // Extract users from billability data (in case there are different users)
-  teamData.billability.userBillabilities.forEach(user => {
-    userDirectory[user.userId] = user.userName;
-  });
-  
+
   return userDirectory;
 }
 
 export async function processQueryWithAI(
-  query: string,
+  query: string
 ): Promise<InsightResponse> {
   try {
     const response = await getAIInsights(query);
@@ -62,7 +90,7 @@ export async function processQueryWithAI(
 }
 
 async function getAIInsights(
-  query: string,
+  query: string
 ): Promise<Omit<InsightResponse, "timestamp">> {
   const geminiService = new GeminiService();
   const context = await getQueryContext();
@@ -73,11 +101,11 @@ async function getAIInsights(
 async function getQueryContext() {
   const period = getCurrentWeekPeriod();
   const teamData = await teamDataService.getTeamInsights(period);
-  return convertToQueryContext(teamData);
+  return await convertToQueryContext(teamData);
 }
 
 function addTimestamp(
-  response: Omit<InsightResponse, "timestamp">,
+  response: Omit<InsightResponse, "timestamp">
 ): InsightResponse {
   return {
     ...response,
@@ -86,7 +114,7 @@ function addTimestamp(
 }
 
 function parseAIResponse(
-  responseText: string,
+  responseText: string
 ): Omit<InsightResponse, "timestamp"> {
   const cleanedResponse = extractJSONFromMarkdown(responseText);
   const parsed = JSON.parse(cleanedResponse);
@@ -123,7 +151,7 @@ function extractFromCodeBlock(text: string): string {
 }
 
 function validateAIResponse(
-  parsed: unknown,
+  parsed: unknown
 ): Omit<InsightResponse, "timestamp"> {
   const response = parsed as Record<string, unknown>;
   return {

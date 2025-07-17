@@ -34,7 +34,7 @@ export class GeminiService {
 
   async generateInsights(
     query: string,
-    context: QueryContext,
+    context: QueryContext
   ): Promise<string> {
     const prompt = this.buildPrompt(query, context);
     const result = await this.model.generateContent(prompt);
@@ -44,7 +44,11 @@ export class GeminiService {
 
   private buildPrompt(query: string, context: QueryContext): string {
     const contextString = JSON.stringify(context, null, 2);
-    const userDirectoryInfo = this.buildUserDirectoryPrompt(context.userDirectory);
+    const userDirectoryInfo = this.buildUserDirectoryPrompt(
+      context.userDirectory
+    );
+    const instructions = this.buildInstructions();
+    const responseFormat = this.buildResponseFormat();
 
     return `
 You are a team resource management assistant. Based on the following query and context, provide insights about team availability and billability.
@@ -55,31 +59,42 @@ Context: ${contextString}
 
 ${userDirectoryInfo}
 
-IMPORTANT INSTRUCTIONS:
-1. ALWAYS use user names (from userDirectory) instead of user IDs when referring to people
-2. When you see a userId like "5ba1f087c0b54c2f85969f34", look it up in the userDirectory and use the corresponding name
-3. Make your insights human-readable by using actual names like "John Doe" instead of user IDs
-4. Focus on actionable insights for team management
+${instructions}
 
-You must respond with valid JSON in exactly this format:
-{
-  "title": "Brief title for the insight",
-  "summary": "1-2 sentence summary of the key finding",
-  "insights": ["insight 1", "insight 2", "insight 3"]
-}
+${responseFormat}
 
 Do not include any text outside the JSON response. Only return valid JSON.
     `.trim();
   }
 
-  private buildUserDirectoryPrompt(userDirectory?: Record<string, string>): string {
+  private buildInstructions(): string {
+    return `IMPORTANT INSTRUCTIONS:
+1. ALWAYS use user names (from userDirectory) instead of user IDs when referring to people
+2. When you see a userId like "5ba1f087c0b54c2f85969f34", look it up in the userDirectory and use the corresponding name.
+If no name is found, use "Unknown User".
+3. Make your insights human-readable by using actual names like "John Doe" instead of user IDs
+4. Focus on actionable insights for team management`;
+  }
+
+  private buildResponseFormat(): string {
+    return `You must respond with valid JSON in exactly this format:
+{
+  "title": "Brief title for the insight",
+  "summary": "1-2 sentence summary of the key finding",
+  "insights": ["insight 1", "insight 2", "insight 3"]
+}`;
+  }
+
+  private buildUserDirectoryPrompt(
+    userDirectory?: Record<string, string>
+  ): string {
     if (!userDirectory || Object.keys(userDirectory).length === 0) {
       return "";
     }
 
     const userMappings = Object.entries(userDirectory)
       .map(([userId, userName]) => `  ${userId} → ${userName}`)
-      .join('\n');
+      .join("\n");
 
     return `
 USER DIRECTORY (Use names, not IDs):

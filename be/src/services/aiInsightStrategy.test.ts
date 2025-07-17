@@ -1,10 +1,12 @@
 import { processQueryWithAI } from "./aiInsightStrategy";
 import { GeminiService } from "./gemini.service";
 import { teamDataService } from "./team-data.service";
+import { jiraService } from "./jira.service";
 
 // Mock dependencies
 jest.mock("./gemini.service");
 jest.mock("./team-data.service");
+jest.mock("./jira.service");
 
 const mockGeminiService = GeminiService as jest.MockedClass<
   typeof GeminiService
@@ -12,10 +14,13 @@ const mockGeminiService = GeminiService as jest.MockedClass<
 const mockTeamDataService = teamDataService as jest.Mocked<
   typeof teamDataService
 >;
+const mockJiraService = jiraService as jest.Mocked<typeof jiraService>;
 
 describe("AI Insight Strategy", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    // Default JIRA mock - can be overridden in individual tests
+    mockJiraService.getUsersByAccountIds.mockResolvedValue([]);
   });
 
   it("should process availability query with real team data", async () => {
@@ -58,6 +63,15 @@ describe("AI Insight Strategy", () => {
     };
 
     mockTeamDataService.getTeamInsights.mockResolvedValue(mockTeamInsights);
+    mockJiraService.getUsersByAccountIds.mockResolvedValue([
+      {
+        accountId: "1",
+        displayName: "John Doe",
+        emailAddress: "john.doe@example.com",
+        avatarUrls: { "48x48": "avatar.png" },
+        active: true,
+      },
+    ]);
     mockGeminiService.prototype.generateInsights.mockResolvedValue(
       JSON.stringify(mockParsedInsights),
     );
@@ -473,6 +487,22 @@ describe("AI Insight Strategy", () => {
     };
 
     mockTeamDataService.getTeamInsights.mockResolvedValue(mockTeamInsights);
+    mockJiraService.getUsersByAccountIds.mockResolvedValue([
+      {
+        accountId: "user1",
+        displayName: "John Doe",
+        emailAddress: "john.doe@example.com",
+        avatarUrls: { "48x48": "avatar1.png" },
+        active: true,
+      },
+      {
+        accountId: "user2",
+        displayName: "Jane Smith",
+        emailAddress: "jane.smith@example.com",
+        avatarUrls: { "48x48": "avatar2.png" },
+        active: true,
+      },
+    ]);
     mockGeminiService.prototype.generateInsights.mockResolvedValue(
       JSON.stringify(mockParsedInsights),
     );
@@ -496,5 +526,89 @@ describe("AI Insight Strategy", () => {
     );
     expect(result.title).toBe("User Billability Analysis");
     expect(result.insights).toContain("John Doe has 87% availability");
+  });
+
+  it("should handle users with 'Unknown User' names by excluding them from userDirectory", async () => {
+    // Arrange
+    const query = "Show me team availability";
+    const mockTeamInsights = {
+      availability: {
+        totalPlannedHours: 200,
+        totalActualHours: 170,
+        teamAvailabilityPercentage: 85,
+        userAvailabilities: [
+          {
+            userId: "user1",
+            userName: "John Doe",
+            plannedHours: 40,
+            actualHours: 35,
+            availabilityPercentage: 87,
+          },
+          {
+            userId: "user2",
+            userName: "Unknown User",
+            plannedHours: 40,
+            actualHours: 30,
+            availabilityPercentage: 75,
+          },
+        ],
+      },
+      billability: {
+        totalHours: 200,
+        billableHours: 150,
+        nonBillableHours: 50,
+        teamBillabilityPercentage: 75,
+        userBillabilities: [],
+      },
+      trend: {
+        actualBillabilityPercentage: 75,
+        idealBillabilityPercentage: 75,
+        isOnTarget: true,
+        variance: 0,
+      },
+      period: { from: "2024-01-01", to: "2024-01-07" },
+    };
+    const mockParsedInsights = {
+      title: "Team Availability Analysis",
+      summary: "Team availability with some unknown users",
+      insights: ["John Doe has 87% availability", "One user has unknown identity"],
+    };
+
+    mockTeamDataService.getTeamInsights.mockResolvedValue(mockTeamInsights);
+    mockJiraService.getUsersByAccountIds.mockResolvedValue([
+      {
+        accountId: "user1",
+        displayName: "John Doe",
+        emailAddress: "john.doe@example.com",
+        avatarUrls: { "48x48": "avatar1.png" },
+        active: true,
+      },
+      {
+        accountId: "user2", 
+        displayName: "Jane Smith", // JIRA has the real name, not "Unknown User"
+        emailAddress: "jane.smith@example.com",
+        avatarUrls: { "48x48": "avatar2.png" },
+        active: true,
+      },
+    ]);
+    mockGeminiService.prototype.generateInsights.mockResolvedValue(
+      JSON.stringify(mockParsedInsights),
+    );
+
+    // Act
+    const result = await processQueryWithAI(query);
+
+    // Assert - userDirectory should only contain known users, not "Unknown User"
+    expect(mockGeminiService.prototype.generateInsights).toHaveBeenCalledWith(
+      query,
+      {
+        availabilityData: mockTeamInsights.availability,
+        billabilityData: mockTeamInsights.billability,
+        trend: mockTeamInsights.trend,
+        period: mockTeamInsights.period,
+        userDirectory: { "user1": "John Doe", "user2": "Jane Smith" }, // Now includes real JIRA names
+      },
+    );
+    expect(result.title).toBe("Team Availability Analysis");
   });
 });
