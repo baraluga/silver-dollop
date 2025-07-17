@@ -85,10 +85,10 @@ describe("TeamDataService", () => {
       mockTempoService.getPlans.mockResolvedValue(mockPlans);
       mockTempoService.getWorklogs.mockResolvedValue(mockWorklogs);
       mockAvailabilityService.calculateTeamAvailability.mockReturnValue(
-        mockAvailability
+        mockAvailability,
       );
       mockBillabilityService.calculateTeamBillability.mockReturnValue(
-        mockBillability
+        mockBillability,
       );
       mockBillabilityService.analyzeBillabilityTrend.mockReturnValue(mockTrend);
 
@@ -112,7 +112,7 @@ describe("TeamDataService", () => {
         teamDataService.getTeamInsights({
           from: "2024-01-01",
           to: "2024-01-01",
-        })
+        }),
       ).rejects.toThrow("Tempo API error");
     });
   });
@@ -160,10 +160,10 @@ describe("TeamDataService", () => {
       mockTempoService.getPlans.mockResolvedValue(mockPlans);
       mockTempoService.getWorklogs.mockResolvedValue(mockWorklogs);
       mockAvailabilityService.calculateUserAvailability.mockReturnValue(
-        mockAvailability
+        mockAvailability,
       );
       mockBillabilityService.calculateUserBillability.mockReturnValue(
-        mockBillability
+        mockBillability,
       );
 
       const result = await teamDataService.getUserInsights("user1", {
@@ -185,7 +185,7 @@ describe("TeamDataService", () => {
         teamDataService.getUserInsights("user1", {
           from: "2024-01-01",
           to: "2024-01-01",
-        })
+        }),
       ).rejects.toThrow("User data error");
     });
   });

@@ -13,7 +13,7 @@ function getCurrentWeekPeriod() {
   const weekStart = new Date(
     now.getFullYear(),
     now.getMonth(),
-    now.getDate() - now.getDay()
+    now.getDate() - now.getDay(),
   );
   const weekEnd = new Date(weekStart);
   weekEnd.setDate(weekStart.getDate() + 6);
@@ -34,7 +34,7 @@ function convertToQueryContext(teamData: TeamInsights): QueryContext {
 }
 
 export async function processQueryWithAI(
-  query: string
+  query: string,
 ): Promise<InsightResponse> {
   try {
     const response = await getAIInsights(query);
@@ -45,7 +45,7 @@ export async function processQueryWithAI(
 }
 
 async function getAIInsights(
-  query: string
+  query: string,
 ): Promise<Omit<InsightResponse, "timestamp">> {
   const geminiService = new GeminiService();
   const context = await getQueryContext();
@@ -60,7 +60,7 @@ async function getQueryContext() {
 }
 
 function addTimestamp(
-  response: Omit<InsightResponse, "timestamp">
+  response: Omit<InsightResponse, "timestamp">,
 ): InsightResponse {
   return {
     ...response,
@@ -69,7 +69,7 @@ function addTimestamp(
 }
 
 function parseAIResponse(
-  responseText: string
+  responseText: string,
 ): Omit<InsightResponse, "timestamp"> {
   const cleanedResponse = extractJSONFromMarkdown(responseText);
   const parsed = JSON.parse(cleanedResponse);
@@ -106,7 +106,7 @@ function extractFromCodeBlock(text: string): string {
 }
 
 function validateAIResponse(
-  parsed: unknown
+  parsed: unknown,
 ): Omit<InsightResponse, "timestamp"> {
   const response = parsed as Record<string, unknown>;
   return {

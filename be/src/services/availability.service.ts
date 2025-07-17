@@ -19,7 +19,7 @@ export interface TeamAvailability {
 export class AvailabilityService {
   calculateUserAvailability(
     userId: string,
-    data: { plans: TempoPlan[]; worklogs: TempoWorklog[] }
+    data: { plans: TempoPlan[]; worklogs: TempoWorklog[] },
   ): UserAvailability {
     const userPlans = this.filterUserPlans(userId, data.plans);
     const userWorklogs = this.filterUserWorklogs(userId, data.worklogs);
@@ -34,7 +34,7 @@ export class AvailabilityService {
       actualHours,
       availabilityPercentage: this.calculatePercentage(
         actualHours,
-        plannedHours
+        plannedHours,
       ),
     };
   }
@@ -45,7 +45,7 @@ export class AvailabilityService {
   }): TeamAvailability {
     const userAvailabilities = this.calculateAllUserAvailabilities(
       this.extractUniqueUserIds(data.plans, data.worklogs),
-      data
+      data,
     );
     const totalPlannedHours = this.sumPlannedHours(userAvailabilities);
     const totalActualHours = this.sumActualHours(userAvailabilities);
@@ -55,7 +55,7 @@ export class AvailabilityService {
       totalActualHours,
       teamAvailabilityPercentage: this.calculatePercentage(
         totalActualHours,
-        totalPlannedHours
+        totalPlannedHours,
       ),
       userAvailabilities,
     };
@@ -67,7 +67,7 @@ export class AvailabilityService {
 
   private filterUserWorklogs(
     userId: string,
-    worklogs: TempoWorklog[]
+    worklogs: TempoWorklog[],
   ): TempoWorklog[] {
     return TempoCommon.filterUserWorklogs(userId, worklogs);
   }
@@ -79,7 +79,7 @@ export class AvailabilityService {
   private calculatePlannedHours(plans: TempoPlan[]): number {
     const totalSeconds = plans.reduce(
       (sum, plan) => sum + plan.totalPlannedSecondsInScope,
-      0
+      0,
     );
     return this.convertSecondsToHours(totalSeconds);
   }
@@ -87,7 +87,7 @@ export class AvailabilityService {
   private calculateActualHours(worklogs: TempoWorklog[]): number {
     const totalSeconds = worklogs.reduce(
       (sum, worklog) => sum + worklog.timeSpentSeconds,
-      0
+      0,
     );
     return this.convertSecondsToHours(totalSeconds);
   }
@@ -102,7 +102,7 @@ export class AvailabilityService {
 
   private extractUserName(
     userId: string,
-    data: { plans: TempoPlan[]; worklogs: TempoWorklog[] }
+    data: { plans: TempoPlan[]; worklogs: TempoWorklog[] },
   ): string {
     const userPlan = this.findUserInPlans(userId, data.plans);
     if (userPlan) return userPlan;
@@ -112,42 +112,43 @@ export class AvailabilityService {
 
   private findUserInWorklogsOrDefault(
     userId: string,
-    worklogs: TempoWorklog[]
+    worklogs: TempoWorklog[],
   ): string {
     return TempoCommon.extractUserName(userId, worklogs);
   }
 
-
   private findUserInPlans(
     userId: string,
-    plans: TempoPlan[]
+    plans: TempoPlan[],
   ): string | undefined {
     const userPlan = plans.find((plan) =>
-      this.matchesUserId(plan.assignee, userId)
+      this.matchesUserId(plan.assignee, userId),
     );
     return this.getDisplayNameFromPlan(userPlan);
   }
 
   private getDisplayNameFromPlan(
-    userPlan: TempoPlan | undefined
+    userPlan: TempoPlan | undefined,
   ): string | undefined {
     return userPlan?.assignee?.displayName;
   }
 
   private extractUniqueUserIds(
     plans: TempoPlan[],
-    worklogs: TempoWorklog[]
+    worklogs: TempoWorklog[],
   ): string[] {
-    return TempoCommon.extractUniqueUserIdsFromPlansAndWorklogs(plans, worklogs);
+    return TempoCommon.extractUniqueUserIdsFromPlansAndWorklogs(
+      plans,
+      worklogs,
+    );
   }
-
 
   private calculateAllUserAvailabilities(
     userIds: string[],
-    data: { plans: TempoPlan[]; worklogs: TempoWorklog[] }
+    data: { plans: TempoPlan[]; worklogs: TempoWorklog[] },
   ): UserAvailability[] {
     return userIds.map((userId) =>
-      this.calculateUserAvailability(userId, data)
+      this.calculateUserAvailability(userId, data),
     );
   }
 

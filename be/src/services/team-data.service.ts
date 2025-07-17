@@ -42,7 +42,7 @@ export class TeamDataService {
     private services: {
       availability: AvailabilityService;
       billability: BillabilityService;
-    }
+    },
   ) {}
 
   async getTeamInsights(period: {
@@ -55,7 +55,7 @@ export class TeamDataService {
 
   async getUserInsights(
     userId: string,
-    period: { from: string; to: string }
+    period: { from: string; to: string },
   ): Promise<UserInsights> {
     const data = await this.fetchTempoDataSafely(period.from, period.to);
     return this.buildUserInsights(userId, { data, period });
@@ -63,12 +63,12 @@ export class TeamDataService {
 
   private buildTeamInsights(
     data: TempoData,
-    period: { from: string; to: string }
+    period: { from: string; to: string },
   ): TeamInsights {
     return {
       availability: this.services.availability.calculateTeamAvailability(data),
       billability: this.services.billability.calculateTeamBillability(
-        data.worklogs
+        data.worklogs,
       ),
       trend: this.services.billability.analyzeBillabilityTrend(data.worklogs),
       period,
@@ -77,16 +77,16 @@ export class TeamDataService {
 
   private buildUserInsights(
     userId: string,
-    params: { data: TempoData; period: { from: string; to: string } }
+    params: { data: TempoData; period: { from: string; to: string } },
   ): UserInsights {
     return {
       availability: this.services.availability.calculateUserAvailability(
         userId,
-        params.data
+        params.data,
       ),
       billability: this.services.billability.calculateUserBillability(
         userId,
-        params.data.worklogs
+        params.data.worklogs,
       ),
       period: params.period,
     };
@@ -94,7 +94,7 @@ export class TeamDataService {
 
   private async fetchTempoDataSafely(
     from: string,
-    to: string
+    to: string,
   ): Promise<TempoData> {
     return await this.fetchTempoData(from, to);
   }

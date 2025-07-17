@@ -33,7 +33,7 @@ export class GeminiService {
 
   async generateInsights(
     query: string,
-    context: QueryContext
+    context: QueryContext,
   ): Promise<string> {
     const prompt = this.buildPrompt(query, context);
     const result = await this.model.generateContent(prompt);

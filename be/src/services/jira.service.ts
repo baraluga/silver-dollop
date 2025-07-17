@@ -10,7 +10,7 @@ export class JiraService {
       axios.get(`${this.baseUrl}/rest/api/3/user`, {
         headers: { Authorization: `Basic ${this.auth}` },
         params: { accountId },
-      })
+      }),
     );
   }
 
@@ -20,13 +20,13 @@ export class JiraService {
   }
 
   private async makeRequest<T>(
-    requestFn: () => Promise<{ data: T }>
+    requestFn: () => Promise<{ data: T }>,
   ): Promise<T> {
     return this.executeWithRetry(requestFn);
   }
 
   private async executeWithRetry<T>(
-    requestFn: () => Promise<{ data: T }>
+    requestFn: () => Promise<{ data: T }>,
   ): Promise<T> {
     const response = await requestFn();
     return response.data;

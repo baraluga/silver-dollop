@@ -69,7 +69,7 @@ describe("GeminiService", () => {
     (service as any).model = mockModel;
 
     await expect(service.generateInsights("test query", {})).rejects.toThrow(
-      "API Error"
+      "API Error",
     );
   });
 });

@@ -1,10 +1,10 @@
-import { TempoService } from './tempo.service';
-import axios from 'axios';
+import { TempoService } from "./tempo.service";
+import axios from "axios";
 
-jest.mock('axios');
+jest.mock("axios");
 const mockedAxios = axios as jest.Mocked<typeof axios>;
 
-describe('TempoService', () => {
+describe("TempoService", () => {
   let service: TempoService;
 
   beforeEach(() => {
@@ -12,94 +12,92 @@ describe('TempoService', () => {
     jest.clearAllMocks();
   });
 
-  describe('getPlans', () => {
-    it('should fetch plans with authentication', async () => {
+  describe("getPlans", () => {
+    it("should fetch plans with authentication", async () => {
       const mockResponse = {
         data: {
           results: [
             {
-              id: 'plan1',
-              user: { accountId: 'user1', displayName: 'John' },
+              id: "plan1",
+              user: { accountId: "user1", displayName: "John" },
               plannedSeconds: 28800,
-              startDate: '2024-01-01',
-              endDate: '2024-01-01'
-            }
-          ]
-        }
+              startDate: "2024-01-01",
+              endDate: "2024-01-01",
+            },
+          ],
+        },
       };
 
       mockedAxios.get.mockResolvedValue(mockResponse);
 
-      const result = await service.getPlans('2024-01-01', '2024-01-31');
+      const result = await service.getPlans("2024-01-01", "2024-01-31");
 
       expect(mockedAxios.get).toHaveBeenCalledWith(
-        'https://api.tempo.io/4/plans',
+        "https://api.tempo.io/4/plans",
         {
           headers: {
-            'Authorization': `Bearer ${process.env.TEMPO_API_TOKEN}`
+            Authorization: `Bearer ${process.env.TEMPO_API_TOKEN}`,
           },
           params: {
-            from: '2024-01-01',
-            to: '2024-01-31'
-          }
-        }
+            from: "2024-01-01",
+            to: "2024-01-31",
+          },
+        },
       );
       expect(result).toEqual(mockResponse.data.results);
     });
   });
 
-  describe('getWorklogs', () => {
-    it('should fetch worklogs with authentication', async () => {
+  describe("getWorklogs", () => {
+    it("should fetch worklogs with authentication", async () => {
       const mockResponse = {
         data: {
           results: [
             {
-              id: 'worklog1',
-              user: { accountId: 'user1', displayName: 'John' },
+              id: "worklog1",
+              user: { accountId: "user1", displayName: "John" },
               timeSpentSeconds: 3600,
               billableSeconds: 3600,
-              startDate: '2024-01-01',
-              description: 'Work'
-            }
-          ]
-        }
+              startDate: "2024-01-01",
+              description: "Work",
+            },
+          ],
+        },
       };
 
       mockedAxios.get.mockResolvedValue(mockResponse);
 
-      const result = await service.getWorklogs('2024-01-01', '2024-01-31');
+      const result = await service.getWorklogs("2024-01-01", "2024-01-31");
 
       expect(mockedAxios.get).toHaveBeenCalledWith(
-        'https://api.tempo.io/4/worklogs',
+        "https://api.tempo.io/4/worklogs",
         {
           headers: {
-            'Authorization': `Bearer ${process.env.TEMPO_API_TOKEN}`
+            Authorization: `Bearer ${process.env.TEMPO_API_TOKEN}`,
           },
           params: {
-            from: '2024-01-01',
-            to: '2024-01-31'
-          }
-        }
+            from: "2024-01-01",
+            to: "2024-01-31",
+          },
+        },
       );
       expect(result).toEqual(mockResponse.data.results);
     });
   });
 
-  describe('getTeamData', () => {
-    it('should fetch team data with authentication', async () => {
+  describe("getTeamData", () => {
+    it("should fetch team data with authentication", async () => {
       const mockResponse = {
         data: {
           results: [
             {
-              id: 'team1',
-              name: 'Development Team',
-              lead: { accountId: 'lead1', displayName: 'Team Lead' },
-              members: [
-                { accountId: 'member1', displayName: 'Member 1' }
-              ]
-            }
-          ]
-        }
+              id: "team1",
+              name: "Development Team",
+              lead: { accountId: "lead1", displayName: "Team Lead" },
+              members: [{ accountId: "member1", displayName: "Member 1" }],
+            },
+          ],
+        },
       };
 
       mockedAxios.get.mockResolvedValue(mockResponse);
@@ -107,12 +105,12 @@ describe('TempoService', () => {
       const result = await service.getTeamData();
 
       expect(mockedAxios.get).toHaveBeenCalledWith(
-        'https://api.tempo.io/4/teams',
+        "https://api.tempo.io/4/teams",
         {
           headers: {
-            'Authorization': `Bearer ${process.env.TEMPO_API_TOKEN}`
-          }
-        }
+            Authorization: `Bearer ${process.env.TEMPO_API_TOKEN}`,
+          },
+        },
       );
       expect(result).toEqual(mockResponse.data);
     });

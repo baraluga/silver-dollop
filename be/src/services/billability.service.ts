@@ -1,6 +1,6 @@
-import { TempoWorklog, TempoUser } from '../types/tempo.interfaces';
-import { getBillabilityConfig } from '../config/billability.config';
-import { TempoCommon } from '../util/tempo-common';
+import { getBillabilityConfig } from "../config/billability.config";
+import { TempoWorklog } from "../types/tempo.interfaces";
+import { TempoCommon } from "../util/tempo-common";
 
 export interface UserBillability {
   userId: string;
@@ -27,12 +27,18 @@ export interface BillabilityTrend {
 }
 
 export class BillabilityService {
-  calculateUserBillability(userId: string, worklogs: TempoWorklog[]): UserBillability {
+  calculateUserBillability(
+    userId: string,
+    worklogs: TempoWorklog[],
+  ): UserBillability {
     const userWorklogs = this.filterUserWorklogs(userId, worklogs);
-    
+
     const totalHours = this.calculateTotalHours(userWorklogs);
     const billableHours = this.calculateBillableHours(userWorklogs);
-    const nonBillableHours = this.calculateNonBillableHours(totalHours, billableHours);
+    const nonBillableHours = this.calculateNonBillableHours(
+      totalHours,
+      billableHours,
+    );
 
     return {
       userId,
@@ -40,23 +46,35 @@ export class BillabilityService {
       totalHours,
       billableHours,
       nonBillableHours,
-      billabilityPercentage: this.calculatePercentage(billableHours, totalHours)
+      billabilityPercentage: this.calculatePercentage(
+        billableHours,
+        totalHours,
+      ),
     };
   }
 
   calculateTeamBillability(worklogs: TempoWorklog[]): TeamBillability {
     const userIds = this.extractUniqueUserIds(worklogs);
-    const userBillabilities = this.calculateAllUserBillabilities(userIds, worklogs);
+    const userBillabilities = this.calculateAllUserBillabilities(
+      userIds,
+      worklogs,
+    );
     const totalHours = this.sumTotalHours(userBillabilities);
     const billableHours = this.sumBillableHours(userBillabilities);
-    const nonBillableHours = this.calculateNonBillableHours(totalHours, billableHours);
+    const nonBillableHours = this.calculateNonBillableHours(
+      totalHours,
+      billableHours,
+    );
 
     return {
       totalHours,
       billableHours,
       nonBillableHours,
-      teamBillabilityPercentage: this.calculatePercentage(billableHours, totalHours),
-      userBillabilities
+      teamBillabilityPercentage: this.calculatePercentage(
+        billableHours,
+        totalHours,
+      ),
+      userBillabilities,
     };
   }
 
@@ -72,29 +90,37 @@ export class BillabilityService {
       actualBillabilityPercentage: actualPercentage,
       idealBillabilityPercentage: idealPercentage,
       isOnTarget: this.isOnTarget(actualPercentage, idealPercentage),
-      variance
+      variance,
     };
   }
 
-  private filterUserWorklogs(userId: string, worklogs: TempoWorklog[]): TempoWorklog[] {
+  private filterUserWorklogs(
+    userId: string,
+    worklogs: TempoWorklog[],
+  ): TempoWorklog[] {
     return TempoCommon.filterUserWorklogs(userId, worklogs);
   }
 
-  private matchesUserId(user: TempoUser | undefined, userId: string): boolean {
-    return TempoCommon.matchesUserId(user, userId);
-  }
-
   private calculateTotalHours(worklogs: TempoWorklog[]): number {
-    const totalSeconds = worklogs.reduce((sum, worklog) => sum + worklog.timeSpentSeconds, 0);
+    const totalSeconds = worklogs.reduce(
+      (sum, worklog) => sum + worklog.timeSpentSeconds,
+      0,
+    );
     return this.convertSecondsToHours(totalSeconds);
   }
 
   private calculateBillableHours(worklogs: TempoWorklog[]): number {
-    const billableSeconds = worklogs.reduce((sum, worklog) => sum + worklog.billableSeconds, 0);
+    const billableSeconds = worklogs.reduce(
+      (sum, worklog) => sum + worklog.billableSeconds,
+      0,
+    );
     return this.convertSecondsToHours(billableSeconds);
   }
 
-  private calculateNonBillableHours(totalHours: number, billableHours: number): number {
+  private calculateNonBillableHours(
+    totalHours: number,
+    billableHours: number,
+  ): number {
     return Math.round((totalHours - billableHours) * 100) / 100;
   }
 
@@ -114,10 +140,13 @@ export class BillabilityService {
     return TempoCommon.extractUniqueUserIds(worklogs);
   }
 
-
-
-  private calculateAllUserBillabilities(userIds: string[], worklogs: TempoWorklog[]): UserBillability[] {
-    return userIds.map(userId => this.calculateUserBillability(userId, worklogs));
+  private calculateAllUserBillabilities(
+    userIds: string[],
+    worklogs: TempoWorklog[],
+  ): UserBillability[] {
+    return userIds.map((userId) =>
+      this.calculateUserBillability(userId, worklogs),
+    );
   }
 
   private sumTotalHours(userBillabilities: UserBillability[]): number {

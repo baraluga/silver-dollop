@@ -1,4 +1,4 @@
-import { getBillabilityConfig } from '../config/billability.config';
+import { getBillabilityConfig } from "../config/billability.config";
 
 type InsightResponse = {
   title: string;
@@ -90,7 +90,7 @@ function findMatchingStrategy(query: string): InsightStrategy {
     new CustomStrategy(),
   ];
   return strategies.find((strategy) =>
-    strategy.matches(query.toLowerCase())
+    strategy.matches(query.toLowerCase()),
   ) as InsightStrategy;
 }
 

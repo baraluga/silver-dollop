@@ -1,48 +1,48 @@
-import Fastify from 'fastify'
-import cors from '@fastify/cors'
-import env from '@fastify/env'
-import rateLimit from '@fastify/rate-limit'
-import { FastifyInstance } from 'fastify'
+import Fastify from "fastify";
+import cors from "@fastify/cors";
+import env from "@fastify/env";
+import rateLimit from "@fastify/rate-limit";
+import { FastifyInstance } from "fastify";
 
 // Environment schema
 const envSchema = {
-  type: 'object',
-  required: ['PORT'],
+  type: "object",
+  required: ["PORT"],
   properties: {
-    PORT: { type: 'string', default: '3000' },
-    NODE_ENV: { type: 'string', default: 'development' },
-    TEMPO_API_TOKEN: { type: 'string' },
-    JIRA_BASE_URL: { type: 'string' },
-    JIRA_EMAIL: { type: 'string' },
-    JIRA_API_TOKEN: { type: 'string' },
-    GEMINI_API_KEY: { type: 'string' }
-  }
-}
+    PORT: { type: "string", default: "3000" },
+    NODE_ENV: { type: "string", default: "development" },
+    TEMPO_API_TOKEN: { type: "string" },
+    JIRA_BASE_URL: { type: "string" },
+    JIRA_EMAIL: { type: "string" },
+    JIRA_API_TOKEN: { type: "string" },
+    GEMINI_API_KEY: { type: "string" },
+  },
+};
 
 export async function buildServer(): Promise<FastifyInstance> {
   const fastify = Fastify({
-    logger: true
-  })
+    logger: true,
+  });
 
   // Register plugins
   await fastify.register(env, {
     schema: envSchema,
-    dotenv: true
-  })
-  
+    dotenv: true,
+  });
+
   await fastify.register(cors, {
-    origin: ['http://localhost:4200'], // Angular dev server
-    credentials: true
-  })
-  
+    origin: ["http://localhost:4200"], // Angular dev server
+    credentials: true,
+  });
+
   await fastify.register(rateLimit, {
     max: 100,
-    timeWindow: '1 minute'
-  })
-  
-  // Register routes
-  await fastify.register(require('./routes/insights'))
-  await fastify.register(require('./routes/health'))
+    timeWindow: "1 minute",
+  });
 
-  return fastify
+  // Register routes
+  await fastify.register(require("./routes/insights"));
+  await fastify.register(require("./routes/health"));
+
+  return fastify;
 }

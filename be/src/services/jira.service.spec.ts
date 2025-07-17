@@ -41,7 +41,7 @@ describe("JiraService", () => {
         {
           headers: { Authorization: `Basic ${process.env.JIRA_AUTH_64}` },
           params: { accountId: "user123" },
-        }
+        },
       );
       expect(result).toEqual(mockUser);
     });
@@ -91,7 +91,7 @@ describe("JiraService", () => {
       expect(result).toEqual(mockUserData);
       expect(mockedAxios.get).toHaveBeenCalledWith(
         `${process.env.JIRA_BASE_URL}/rest/api/3/myself`,
-        { headers: { Authorization: `Basic ${process.env.JIRA_AUTH_64}` } }
+        { headers: { Authorization: `Basic ${process.env.JIRA_AUTH_64}` } },
       );
     });
   });

@@ -3,7 +3,7 @@ export interface JiraUser {
   displayName: string;
   emailAddress: string;
   avatarUrls: {
-    '48x48': string;
+    "48x48": string;
   };
   active: boolean;
 }
