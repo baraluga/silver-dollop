@@ -1,4 +1,5 @@
 import { TempoPlan, TempoWorklog } from '../types/tempo.interfaces';
+import { nullSafe } from '../util/null-safe';
 
 export interface UserAvailability {
   userId: string;
@@ -87,15 +88,15 @@ export class AvailabilityService {
   }
 
   private getUserDisplayName(userWorklog: TempoWorklog | undefined): string {
-    return userWorklog?.user?.displayName ?? 'Unknown User';
+    return nullSafe.string(userWorklog?.user?.displayName, 'Unknown User');
   }
 
   private findUserInPlans(userId: string, plans: TempoPlan[]): string | null {
     const userPlan = plans.find(plan => plan.user?.accountId === userId);
-    return this.extractDisplayName(userPlan);
+    return this.getDisplayNameFromPlan(userPlan);
   }
 
-  private extractDisplayName(userPlan: TempoPlan | undefined): string | null {
+  private getDisplayNameFromPlan(userPlan: TempoPlan | undefined): string | null {
     return userPlan?.user?.displayName ?? null;
   }
 
@@ -109,8 +110,9 @@ export class AvailabilityService {
   }
 
   private addUserIdIfValid(user: { accountId?: string } | undefined, userIds: Set<string>): void {
-    if (user?.accountId) {
-      userIds.add(user.accountId);
+    const accountId = user?.accountId;
+    if (accountId) {
+      userIds.add(accountId);
     }
   }
 

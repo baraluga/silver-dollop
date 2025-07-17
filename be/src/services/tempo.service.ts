@@ -36,9 +36,19 @@ export class TempoService {
 
   private extractResults(response: { data: { results?: unknown[] } }, type: string): unknown[] {
     const results = response.data.results || [];
-    console.log(`Tempo ${type} API returned ${results.length} items`);
-    console.log(`First item structure:`, results[0] ? JSON.stringify(results[0], null, 2) : 'No items');
+    this.logResults(results, type);
     return results;
+  }
+
+  private logResults(results: unknown[], type: string): void {
+    console.log(`Tempo ${type} API returned ${results.length} items`);
+    this.logFirstItem(results);
+  }
+
+  private logFirstItem(results: unknown[]): void {
+    const firstItem = results[0];
+    const itemString = firstItem ? JSON.stringify(firstItem, null, 2) : 'No items';
+    console.log(`First item structure:`, itemString);
   }
 
   async getTeamData(): Promise<unknown> {

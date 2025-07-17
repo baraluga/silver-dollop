@@ -1,5 +1,6 @@
 import { TempoWorklog } from '../types/tempo.interfaces';
 import { getBillabilityConfig } from '../config/billability.config';
+import { nullSafe } from '../util/null-safe';
 
 export interface UserBillability {
   userId: string;
@@ -105,7 +106,7 @@ export class BillabilityService {
 
   private extractUserName(userId: string, worklogs: TempoWorklog[]): string {
     const userWorklog = worklogs.find(worklog => worklog.user?.accountId === userId);
-    return userWorklog?.user?.displayName ?? 'Unknown User';
+    return nullSafe.string(userWorklog?.user?.displayName, 'Unknown User');
   }
 
   private extractUniqueUserIds(worklogs: TempoWorklog[]): string[] {
@@ -115,8 +116,9 @@ export class BillabilityService {
   }
 
   private addUserIdIfValid(user: { accountId?: string } | undefined, userIds: Set<string>): void {
-    if (user?.accountId) {
-      userIds.add(user.accountId);
+    const accountId = user?.accountId;
+    if (accountId) {
+      userIds.add(accountId);
     }
   }
 

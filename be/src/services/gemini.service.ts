@@ -53,7 +53,14 @@ Query: ${query}
 
 Context: ${JSON.stringify(context, null, 2)}
 
-Please provide a clear, actionable response with specific recommendations for team resource management.
+IMPORTANT: You must respond with valid JSON in exactly this format:
+{
+  "title": "Brief title for the insight",
+  "summary": "1-2 sentence summary of the key finding",
+  "insights": ["insight 1", "insight 2", "insight 3"]
+}
+
+Do not include any text outside the JSON response. Only return valid JSON.
     `.trim();
   }
 }
