@@ -30,7 +30,24 @@ function convertToQueryContext(teamData: TeamInsights): QueryContext {
     billabilityData: teamData.billability,
     trend: teamData.trend,
     period: teamData.period,
+    userDirectory: buildUserDirectory(teamData),
   };
+}
+
+function buildUserDirectory(teamData: TeamInsights): Record<string, string> {
+  const userDirectory: Record<string, string> = {};
+  
+  // Extract users from availability data
+  teamData.availability.userAvailabilities.forEach(user => {
+    userDirectory[user.userId] = user.userName;
+  });
+  
+  // Extract users from billability data (in case there are different users)
+  teamData.billability.userBillabilities.forEach(user => {
+    userDirectory[user.userId] = user.userName;
+  });
+  
+  return userDirectory;
 }
 
 export async function processQueryWithAI(

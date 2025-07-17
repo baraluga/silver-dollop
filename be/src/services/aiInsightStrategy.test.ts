@@ -74,6 +74,7 @@ describe("AI Insight Strategy", () => {
         billabilityData: mockTeamInsights.billability,
         trend: mockTeamInsights.trend,
         period: mockTeamInsights.period,
+        userDirectory: { "1": "John Doe" },
       },
     );
     expect(result.title).toBe("Team Availability Analysis");
@@ -120,6 +121,16 @@ describe("AI Insight Strategy", () => {
     const result = await processQueryWithAI(query);
 
     // Assert
+    expect(mockGeminiService.prototype.generateInsights).toHaveBeenCalledWith(
+      query,
+      {
+        availabilityData: mockTeamInsights.availability,
+        billabilityData: mockTeamInsights.billability,
+        trend: mockTeamInsights.trend,
+        period: mockTeamInsights.period,
+        userDirectory: {},
+      },
+    );
     expect(result.title).toBe("Billability Analysis");
     expect(result.insights).toContain("Team has 92% billability rate");
   });
@@ -406,9 +417,84 @@ describe("AI Insight Strategy", () => {
         billabilityData: mockTeamInsights.billability,
         trend: mockTeamInsights.trend,
         period: mockTeamInsights.period,
+        userDirectory: {},
       },
     );
     expect(result.title).toBe("Empty Data Analysis");
     expect(result.insights).toContain("No availability data found");
+  });
+
+  it("should build user directory from billability data", async () => {
+    // Arrange
+    const query = "Show me team billability by user";
+    const mockTeamInsights = {
+      availability: {
+        totalPlannedHours: 200,
+        totalActualHours: 170,
+        teamAvailabilityPercentage: 85,
+        userAvailabilities: [
+          {
+            userId: "user1",
+            userName: "John Doe",
+            plannedHours: 40,
+            actualHours: 35,
+            availabilityPercentage: 87,
+          },
+        ],
+      },
+      billability: {
+        totalHours: 200,
+        billableHours: 184,
+        nonBillableHours: 16,
+        teamBillabilityPercentage: 92,
+        userBillabilities: [
+          {
+            userId: "user2",
+            userName: "Jane Smith",
+            totalHours: 40,
+            billableHours: 36,
+            nonBillableHours: 4,
+            billabilityPercentage: 90,
+          },
+        ],
+      },
+      trend: {
+        actualBillabilityPercentage: 92,
+        idealBillabilityPercentage: 88,
+        isOnTarget: true,
+        variance: 4,
+      },
+      period: { from: "2024-01-01", to: "2024-01-07" },
+    };
+    const mockParsedInsights = {
+      title: "User Billability Analysis",
+      summary: "Individual user billability breakdown",
+      insights: ["John Doe has 87% availability", "Jane Smith has 90% billability"],
+    };
+
+    mockTeamDataService.getTeamInsights.mockResolvedValue(mockTeamInsights);
+    mockGeminiService.prototype.generateInsights.mockResolvedValue(
+      JSON.stringify(mockParsedInsights),
+    );
+
+    // Act
+    const result = await processQueryWithAI(query);
+
+    // Assert
+    expect(mockGeminiService.prototype.generateInsights).toHaveBeenCalledWith(
+      query,
+      {
+        availabilityData: mockTeamInsights.availability,
+        billabilityData: mockTeamInsights.billability,
+        trend: mockTeamInsights.trend,
+        period: mockTeamInsights.period,
+        userDirectory: {
+          "user1": "John Doe",
+          "user2": "Jane Smith",
+        },
+      },
+    );
+    expect(result.title).toBe("User Billability Analysis");
+    expect(result.insights).toContain("John Doe has 87% availability");
   });
 });

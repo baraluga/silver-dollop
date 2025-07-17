@@ -72,4 +72,44 @@ describe("GeminiService", () => {
       "API Error",
     );
   });
+
+  it("should include user directory in prompt when provided", async () => {
+    const query = "What is our team availability?";
+    const context = {
+      availabilityData: { totalHours: 160, availableHours: 120 },
+      billabilityData: { averageRate: 78, idealTarget: 75 },
+      userDirectory: {
+        "user1": "John Doe",
+        "user2": "Jane Smith",
+      },
+    };
+
+    const mockModel = {
+      generateContent: jest.fn().mockResolvedValue({
+        response: {
+          text: jest.fn().mockResolvedValue("Response with user directory"),
+        },
+      }),
+    };
+
+    const mockGenAI = {
+      getGenerativeModel: jest.fn().mockReturnValue(mockModel),
+    };
+
+    (service as any).genAI = mockGenAI;
+    (service as any).model = mockModel;
+
+    const result = await service.generateInsights(query, context);
+
+    expect(result).toBe("Response with user directory");
+    expect(mockModel.generateContent).toHaveBeenCalledWith(
+      expect.stringContaining("USER DIRECTORY (Use names, not IDs):"),
+    );
+    expect(mockModel.generateContent).toHaveBeenCalledWith(
+      expect.stringContaining("user1 → John Doe"),
+    );
+    expect(mockModel.generateContent).toHaveBeenCalledWith(
+      expect.stringContaining("user2 → Jane Smith"),
+    );
+  });
 });
