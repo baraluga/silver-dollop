@@ -23,6 +23,7 @@
     "@google/generative-ai": "^0.24.1",
     "@types/node": "^24.0.13",
     "axios": "^1.10.0",
+    "chrono-node": "^2.8.3",
     "fastify": "^5.4.0",
     "nodemon": "^3.1.10",
     "openai": "^5.9.0",
