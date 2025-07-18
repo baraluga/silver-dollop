@@ -1,1 +1,13 @@
 /* Insight Display Component Styles */
+
+details[open] summary svg {
+  transform: rotate(90deg);
+}
+
+details summary {
+  list-style: none;
+}
+
+details summary::-webkit-details-marker {
+  display: none;
+}

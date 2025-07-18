@@ -2,6 +2,7 @@ export interface Insight {
   title: string;
   summary: string;
   insights: string[];
+  thoughtProcess?: string;
 }
 
 export interface InsightRequest {
