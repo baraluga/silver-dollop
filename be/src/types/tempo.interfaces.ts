@@ -19,6 +19,8 @@ export interface TempoWorklog {
   billableSeconds: number;
   startDate: string;
   description: string;
+  projectKey?: string;
+  projectName?: string;
 }
 
 export interface TempoTeam {

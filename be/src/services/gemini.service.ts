@@ -73,7 +73,9 @@ Do not include any text outside the JSON response. Only return valid JSON.
 2. When you see a userId like "5ba1f087c0b54c2f85969f34", look it up in the userDirectory and use the corresponding name.
 If no name is found, use "Unknown User".
 3. Make your insights human-readable by using actual names like "John Doe" instead of user IDs
-4. Focus on actionable insights for team management`;
+4. When projectInsights data is available, include project-level insights about resource allocation
+5. Highlight which projects are consuming the most team time and resources
+6. Focus on actionable insights for team management`;
   }
 
   private buildResponseFormat(): string {

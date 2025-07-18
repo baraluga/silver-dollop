@@ -2,6 +2,7 @@ import { DateParsingService } from "./date-parsing.service";
 import { GeminiService, QueryContext } from "./gemini.service";
 import { jiraService } from "./jira.service";
 import { teamDataService, TeamInsights } from "./team-data.service";
+import { ProjectInsightsService } from "./project-insights.service";
 
 type InsightResponse = {
   title: string;
@@ -44,10 +45,14 @@ function getPeriodFromQuery(query: string) {
 async function convertToQueryContext(
   teamData: TeamInsights
 ): Promise<QueryContext> {
+  const projectInsightsService = new ProjectInsightsService();
+  const projectInsights = projectInsightsService.generateProjectInsights(teamData.worklogs);
+  
   return {
     availabilityData: teamData.availability,
     billabilityData: teamData.billability,
     trend: teamData.trend,
+    projectInsights,
     period: teamData.period,
     userDirectory: await buildUserDirectory(teamData),
   };

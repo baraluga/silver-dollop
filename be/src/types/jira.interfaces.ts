@@ -14,3 +14,10 @@ export interface JiraApiResponse<T> {
   startAt: number;
   maxResults: number;
 }
+
+export interface JiraProject {
+  id: string;
+  key: string;
+  name: string;
+  projectTypeKey: string;
+}

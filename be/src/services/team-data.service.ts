@@ -10,6 +10,7 @@ import {
   UserBillability,
   BillabilityTrend,
 } from "./billability.service";
+import { WorklogEnrichmentService } from "./worklog-enrichment.service";
 import { TempoPlan, TempoWorklog } from "../types/tempo.interfaces";
 
 interface TempoData {
@@ -21,6 +22,7 @@ export interface TeamInsights {
   availability: TeamAvailability;
   billability: TeamBillability;
   trend: BillabilityTrend;
+  worklogs: TempoWorklog[];
   period: {
     from: string;
     to: string;
@@ -37,6 +39,8 @@ export interface UserInsights {
 }
 
 export class TeamDataService {
+  private worklogEnrichmentService = new WorklogEnrichmentService();
+
   constructor(
     private tempoService: TempoService,
     private services: {
@@ -71,6 +75,7 @@ export class TeamDataService {
         data.worklogs,
       ),
       trend: this.services.billability.analyzeBillabilityTrend(data.worklogs),
+      worklogs: data.worklogs,
       period,
     };
   }
@@ -100,12 +105,14 @@ export class TeamDataService {
   }
 
   private async fetchTempoData(from: string, to: string): Promise<TempoData> {
-    const [plans, worklogs] = await Promise.all([
+    const [plans, rawWorklogs] = await Promise.all([
       this.tempoService.getPlans(from, to),
       this.tempoService.getWorklogs(from, to),
     ]);
 
-    return { plans, worklogs };
+    const enrichedWorklogs = await this.worklogEnrichmentService.enrichWorklogsWithProjects(rawWorklogs);
+
+    return { plans, worklogs: enrichedWorklogs };
   }
 }
 
