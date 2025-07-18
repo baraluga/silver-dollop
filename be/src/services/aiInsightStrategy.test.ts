@@ -61,6 +61,7 @@ describe("AI Insight Strategy", () => {
         isOnTarget: true,
         variance: 3,
       },
+      worklogs: [],
       period: { from: "2024-01-01", to: "2024-01-07" },
     };
     const mockParsedInsights = {
@@ -94,6 +95,11 @@ describe("AI Insight Strategy", () => {
         availabilityData: mockTeamInsights.availability,
         billabilityData: mockTeamInsights.billability,
         trend: mockTeamInsights.trend,
+        projectInsights: expect.objectContaining({
+          totalProjects: 0,
+          projectBreakdown: [],
+          topProjects: [],
+        }),
         period: mockTeamInsights.period,
         userDirectory: { "1": "John Doe" },
       },
@@ -125,6 +131,7 @@ describe("AI Insight Strategy", () => {
         isOnTarget: true,
         variance: 4,
       },
+      worklogs: [],
       period: { from: "2024-01-01", to: "2024-01-07" },
     };
     const mockParsedInsights = {
@@ -148,6 +155,11 @@ describe("AI Insight Strategy", () => {
         availabilityData: mockTeamInsights.availability,
         billabilityData: mockTeamInsights.billability,
         trend: mockTeamInsights.trend,
+        projectInsights: expect.objectContaining({
+          totalProjects: 0,
+          projectBreakdown: [],
+          topProjects: [],
+        }),
         period: mockTeamInsights.period,
         userDirectory: {},
       },
@@ -200,6 +212,7 @@ describe("AI Insight Strategy", () => {
         isOnTarget: false,
         variance: -75,
       },
+      worklogs: [],
       period: { from: "2024-01-01", to: "2024-01-07" },
     };
     const mockParsedInsights = {
@@ -244,6 +257,7 @@ describe("AI Insight Strategy", () => {
         isOnTarget: false,
         variance: -75,
       },
+      worklogs: [],
       period: { from: "2024-01-01", to: "2024-01-07" },
     };
     const mockParsedInsights = {
@@ -288,6 +302,7 @@ describe("AI Insight Strategy", () => {
         isOnTarget: false,
         variance: -75,
       },
+      worklogs: [],
       period: { from: "2024-01-01", to: "2024-01-07" },
     };
 
@@ -329,6 +344,7 @@ describe("AI Insight Strategy", () => {
         isOnTarget: false,
         variance: -75,
       },
+      worklogs: [],
       period: { from: "2024-01-01", to: "2024-01-07" },
     };
 
@@ -370,6 +386,7 @@ describe("AI Insight Strategy", () => {
         isOnTarget: false,
         variance: -75,
       },
+      worklogs: [],
       period: { from: "2024-01-01", to: "2024-01-07" },
     };
     const mockParsedInsights = {
@@ -414,6 +431,7 @@ describe("AI Insight Strategy", () => {
         isOnTarget: false,
         variance: -75,
       },
+      worklogs: [],
       period: { from: "2024-01-01", to: "2024-01-07" },
     };
     const mockParsedInsights = {
@@ -437,6 +455,11 @@ describe("AI Insight Strategy", () => {
         availabilityData: mockTeamInsights.availability,
         billabilityData: mockTeamInsights.billability,
         trend: mockTeamInsights.trend,
+        projectInsights: expect.objectContaining({
+          totalProjects: 0,
+          projectBreakdown: [],
+          topProjects: [],
+        }),
         period: mockTeamInsights.period,
         userDirectory: {},
       },
@@ -485,6 +508,7 @@ describe("AI Insight Strategy", () => {
         isOnTarget: true,
         variance: 4,
       },
+      worklogs: [],
       period: { from: "2024-01-01", to: "2024-01-07" },
     };
     const mockParsedInsights = {
@@ -524,6 +548,11 @@ describe("AI Insight Strategy", () => {
         availabilityData: mockTeamInsights.availability,
         billabilityData: mockTeamInsights.billability,
         trend: mockTeamInsights.trend,
+        projectInsights: expect.objectContaining({
+          totalProjects: 0,
+          projectBreakdown: [],
+          topProjects: [],
+        }),
         period: mockTeamInsights.period,
         userDirectory: {
           "user1": "John Doe",
@@ -573,6 +602,7 @@ describe("AI Insight Strategy", () => {
         isOnTarget: true,
         variance: 0,
       },
+      worklogs: [],
       period: { from: "2024-01-01", to: "2024-01-07" },
     };
     const mockParsedInsights = {
@@ -612,6 +642,11 @@ describe("AI Insight Strategy", () => {
         availabilityData: mockTeamInsights.availability,
         billabilityData: mockTeamInsights.billability,
         trend: mockTeamInsights.trend,
+        projectInsights: expect.objectContaining({
+          totalProjects: 0,
+          projectBreakdown: [],
+          topProjects: [],
+        }),
         period: mockTeamInsights.period,
         userDirectory: { "user1": "John Doe", "user2": "Jane Smith" }, // Now includes real JIRA names
       },
@@ -642,6 +677,7 @@ describe("AI Insight Strategy", () => {
         isOnTarget: false,
         variance: -75,
       },
+      worklogs: [],
       period: { from: "2025-07-17", to: "2025-07-17" },
     };
     const mockParsedInsights = {
