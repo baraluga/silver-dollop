@@ -6,8 +6,8 @@ interface BillabilityConfig {
 
 export function getBillabilityConfig(): BillabilityConfig {
   return {
-    idealRatio: 0.75,
-    idealRatioPercentage: 75,
+    idealRatio: 0.77,
+    idealRatioPercentage: 77,
     description: "Ideal billability ratio target for team performance",
   };
 }
