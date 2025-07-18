@@ -17,6 +17,7 @@ const insightResponseSchema = {
     summary: { type: "string" },
     insights: { type: "array", items: { type: "string" } },
     timestamp: { type: "string" },
+    thoughtProcess: { type: "string", nullable: true },
   },
 };
 
@@ -35,6 +36,6 @@ export default async function insightsRoutes(fastify: FastifyInstance) {
     async (request) => {
       const { query } = request.body as { query: string };
       return processQueryWithAI(query);
-    },
+    }
   );
 }

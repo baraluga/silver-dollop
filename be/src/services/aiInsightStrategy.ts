@@ -1,13 +1,14 @@
+import { DateParsingService } from "./date-parsing.service";
 import { GeminiService, QueryContext } from "./gemini.service";
 import { jiraService } from "./jira.service";
 import { teamDataService, TeamInsights } from "./team-data.service";
-import { DateParsingService } from "./date-parsing.service";
 
 type InsightResponse = {
   title: string;
   summary: string;
   insights: string[];
   timestamp: string;
+  thoughtProcess?: string;
 };
 
 function getCurrentWeekPeriod() {
@@ -29,14 +30,14 @@ function getCurrentWeekPeriod() {
 function getPeriodFromQuery(query: string) {
   const dateParsingService = new DateParsingService();
   const parsedDate = dateParsingService.parseQueryDate(query);
-  
+
   if (parsedDate) {
     return {
       from: parsedDate.startDate,
       to: parsedDate.endDate,
     };
   }
-  
+
   return getCurrentWeekPeriod();
 }
 
@@ -169,10 +170,12 @@ function validateAIResponse(
   parsed: unknown
 ): Omit<InsightResponse, "timestamp"> {
   const response = parsed as Record<string, unknown>;
+  console.log("AI Response:", response);
   return {
     title: response.title as string,
     summary: response.summary as string,
     insights: filterStringInsights(response.insights as unknown[]),
+    thoughtProcess: response.thoughtProcess as string,
   };
 }
 

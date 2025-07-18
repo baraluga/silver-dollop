@@ -81,7 +81,8 @@ If no name is found, use "Unknown User".
 {
   "title": "Brief title for the insight",
   "summary": "1-2 sentence summary of the key finding",
-  "insights": ["insight 1", "insight 2", "insight 3"]
+  "insights": ["insight 1", "insight 2", "insight 3"],
+  "thoughtProcess": "Explain (in layman's terms) how you arrived at the key finding, including any assumptions or calculations made.",
 }`;
   }
 
