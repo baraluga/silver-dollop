@@ -2,11 +2,13 @@ import { processQueryWithAI } from "./aiInsightStrategy";
 import { GeminiService } from "./gemini.service";
 import { teamDataService } from "./team-data.service";
 import { jiraService } from "./jira.service";
+import { DateParsingService } from "./date-parsing.service";
 
 // Mock dependencies
 jest.mock("./gemini.service");
 jest.mock("./team-data.service");
 jest.mock("./jira.service");
+jest.mock("./date-parsing.service");
 
 const mockGeminiService = GeminiService as jest.MockedClass<
   typeof GeminiService
@@ -15,12 +17,17 @@ const mockTeamDataService = teamDataService as jest.Mocked<
   typeof teamDataService
 >;
 const mockJiraService = jiraService as jest.Mocked<typeof jiraService>;
+const mockDateParsingService = DateParsingService as jest.MockedClass<
+  typeof DateParsingService
+>;
 
 describe("AI Insight Strategy", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     // Default JIRA mock - can be overridden in individual tests
     mockJiraService.getUsersByAccountIds.mockResolvedValue([]);
+    // Default DateParsingService mock - returns null (uses current week)
+    mockDateParsingService.prototype.parseQueryDate.mockReturnValue(null);
   });
 
   it("should process availability query with real team data", async () => {
@@ -610,5 +617,57 @@ describe("AI Insight Strategy", () => {
       },
     );
     expect(result.title).toBe("Team Availability Analysis");
+  });
+
+  it("should use parsed date from query when available", async () => {
+    // Arrange
+    const query = "who logged the most yesterday?";
+    const mockTeamInsights = {
+      availability: {
+        totalPlannedHours: 0,
+        totalActualHours: 0,
+        teamAvailabilityPercentage: 0,
+        userAvailabilities: [],
+      },
+      billability: {
+        totalHours: 0,
+        billableHours: 0,
+        nonBillableHours: 0,
+        teamBillabilityPercentage: 0,
+        userBillabilities: [],
+      },
+      trend: {
+        actualBillabilityPercentage: 0,
+        idealBillabilityPercentage: 75,
+        isOnTarget: false,
+        variance: -75,
+      },
+      period: { from: "2025-07-17", to: "2025-07-17" },
+    };
+    const mockParsedInsights = {
+      title: "Yesterday Analysis",
+      summary: "Data from yesterday",
+      insights: ["Analysis for yesterday's data"],
+    };
+
+    mockDateParsingService.prototype.parseQueryDate.mockReturnValue({
+      startDate: "2025-07-17",
+      endDate: "2025-07-17",
+    });
+    mockTeamDataService.getTeamInsights.mockResolvedValue(mockTeamInsights);
+    mockGeminiService.prototype.generateInsights.mockResolvedValue(
+      JSON.stringify(mockParsedInsights),
+    );
+
+    // Act
+    const result = await processQueryWithAI(query);
+
+    // Assert
+    expect(mockDateParsingService.prototype.parseQueryDate).toHaveBeenCalledWith(query);
+    expect(mockTeamDataService.getTeamInsights).toHaveBeenCalledWith({
+      from: "2025-07-17",
+      to: "2025-07-17",
+    });
+    expect(result.title).toBe("Yesterday Analysis");
   });
 });

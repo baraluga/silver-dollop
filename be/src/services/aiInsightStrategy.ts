@@ -1,6 +1,7 @@
 import { GeminiService, QueryContext } from "./gemini.service";
 import { jiraService } from "./jira.service";
 import { teamDataService, TeamInsights } from "./team-data.service";
+import { DateParsingService } from "./date-parsing.service";
 
 type InsightResponse = {
   title: string;
@@ -23,6 +24,20 @@ function getCurrentWeekPeriod() {
     from: weekStart.toISOString().split("T")[0],
     to: weekEnd.toISOString().split("T")[0],
   };
+}
+
+function getPeriodFromQuery(query: string) {
+  const dateParsingService = new DateParsingService();
+  const parsedDate = dateParsingService.parseQueryDate(query);
+  
+  if (parsedDate) {
+    return {
+      from: parsedDate.startDate,
+      to: parsedDate.endDate,
+    };
+  }
+  
+  return getCurrentWeekPeriod();
 }
 
 async function convertToQueryContext(
@@ -93,13 +108,13 @@ async function getAIInsights(
   query: string
 ): Promise<Omit<InsightResponse, "timestamp">> {
   const geminiService = new GeminiService();
-  const context = await getQueryContext();
+  const context = await getQueryContext(query);
   const aiResponseText = await geminiService.generateInsights(query, context);
   return parseAIResponse(aiResponseText);
 }
 
-async function getQueryContext() {
-  const period = getCurrentWeekPeriod();
+async function getQueryContext(query: string) {
+  const period = getPeriodFromQuery(query);
   const teamData = await teamDataService.getTeamInsights(period);
   return await convertToQueryContext(teamData);
 }
