@@ -36,13 +36,13 @@
           <span class="text-xs text-gray-600">JIRA</span>
         </div>
 
-        <!-- Gemini Status -->
+        <!-- AI Status -->
         <div class="flex items-center space-x-1">
           <div class="status-dot" 
                [class.loading]="isLoading"
-               [class.healthy]="!isLoading && isHealthy('gemini')"
-               [class.error]="!isLoading && !isHealthy('gemini')"
-               [class.pulse]="!isLoading && isConfirmedHealthy && isHealthy('gemini')">
+               [class.healthy]="!isLoading && isHealthy('ai')"
+               [class.error]="!isLoading && !isHealthy('ai')"
+               [class.pulse]="!isLoading && isConfirmedHealthy && isHealthy('ai')">
           </div>
           <span class="text-xs text-gray-600">AI</span>
         </div>
@@ -53,7 +53,7 @@
     <div *ngIf="!isLoading && hasErrors()" class="text-xs text-red-600">
       <span *ngIf="!isHealthy('tempo')">Check Tempo token</span>
       <span *ngIf="!isHealthy('jira')">Check JIRA token</span>
-      <span *ngIf="!isHealthy('gemini')">Check AI key</span>
+      <span *ngIf="!isHealthy('ai')">Check AI key</span>
     </div>
   </div>
 </div>

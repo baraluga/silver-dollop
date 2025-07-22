@@ -36,7 +36,7 @@ describe('ApiStatusComponent', () => {
         backend: { status: 'healthy', message: 'Backend is running' },
         tempo: { status: 'healthy', message: 'Tempo API is accessible' },
         jira: { status: 'healthy', message: 'JIRA API is accessible' },
-        gemini: { status: 'healthy', message: 'Gemini AI is accessible' }
+        ai: { status: 'healthy', message: 'AI service is accessible' }
       }
     };
 
@@ -48,7 +48,7 @@ describe('ApiStatusComponent', () => {
     expect(component.isHealthy('backend')).toBe(true);
     expect(component.isHealthy('tempo')).toBe(true);
     expect(component.isHealthy('jira')).toBe(true);
-    expect(component.isHealthy('gemini')).toBe(true);
+    expect(component.isHealthy('ai')).toBe(true);
   });
 
   it('should display error status when Tempo API fails', () => {
@@ -58,7 +58,7 @@ describe('ApiStatusComponent', () => {
         backend: { status: 'healthy', message: 'Backend is running' },
         tempo: { status: 'error', message: 'Tempo API connection failed. Check TEMPO_API_TOKEN in .env file' },
         jira: { status: 'healthy', message: 'JIRA API is accessible' },
-        gemini: { status: 'healthy', message: 'Gemini AI is accessible' }
+        ai: { status: 'healthy', message: 'AI service is accessible' }
       }
     };
 
@@ -83,14 +83,14 @@ describe('ApiStatusComponent', () => {
     consoleErrorSpy.mockRestore();
   });
 
-  it('should display error status when Gemini AI fails', () => {
+  it('should display error status when AI service fails', () => {
     const errorResponse = {
       status: 'degraded',
       checks: {
         backend: { status: 'healthy', message: 'Backend is running' },
         tempo: { status: 'healthy', message: 'Tempo API is accessible' },
         jira: { status: 'healthy', message: 'JIRA API is accessible' },
-        gemini: { status: 'error', message: 'Gemini AI connection failed. Check GEMINI_API_KEY in .env file' }
+        ai: { status: 'error', message: 'AI service connection failed. Check AI_API_KEY in .env file' }
       }
     };
 
@@ -98,8 +98,8 @@ describe('ApiStatusComponent', () => {
 
     fixture.detectChanges();
 
-    expect(component.isHealthy('gemini')).toBe(false);
-    expect(component.getStatusMessage('gemini')).toBe('Gemini AI connection failed. Check GEMINI_API_KEY in .env file');
+    expect(component.isHealthy('ai')).toBe(false);
+    expect(component.getStatusMessage('ai')).toBe('AI service connection failed. Check AI_API_KEY in .env file');
     expect(component.hasErrors()).toBe(true);
   });
 
@@ -110,7 +110,7 @@ describe('ApiStatusComponent', () => {
         backend: { status: 'healthy', message: 'Backend is running' },
         tempo: { status: 'healthy', message: 'Tempo API is accessible' },
         jira: { status: 'healthy', message: 'JIRA API is accessible' },
-        gemini: { status: 'healthy', message: 'Gemini AI is accessible' }
+        ai: { status: 'healthy', message: 'AI service is accessible' }
       }
     };
 
@@ -139,7 +139,7 @@ describe('ApiStatusComponent', () => {
         backend: { status: 'healthy', message: 'Backend is running' },
         tempo: { status: 'healthy', message: 'Tempo API is accessible' },
         jira: { status: 'healthy', message: 'JIRA API is accessible' },
-        gemini: { status: 'healthy', message: 'Gemini AI is accessible' }
+        ai: { status: 'healthy', message: 'AI service is accessible' }
       }
     };
 
@@ -172,7 +172,7 @@ describe('ApiStatusComponent', () => {
         backend: { status: 'healthy', message: 'Backend is running' },
         tempo: { status: 'error', message: 'Tempo API connection failed' },
         jira: { status: 'healthy', message: 'JIRA API is accessible' },
-        gemini: { status: 'healthy', message: 'Gemini AI is accessible' }
+        ai: { status: 'healthy', message: 'AI service is accessible' }
       }
     };
 
