@@ -11,6 +11,10 @@ describe('AIServiceFactory', () => {
   beforeEach(() => {
     jest.resetAllMocks();
     process.env = { ...originalEnv };
+    // Set required env vars to prevent constructor errors
+    process.env.GEMINI_API_KEY = 'test-key';
+    process.env.AWS_ACCESS_KEY_ID = 'test-access-key';
+    process.env.AWS_SECRET_ACCESS_KEY = 'test-secret-key';
   });
 
   afterEach(() => {

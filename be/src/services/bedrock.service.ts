@@ -47,9 +47,14 @@ export class BedrockService implements AIService {
   }
 
   private getClientRegion(config?: BedrockConfig): string {
-    if (config?.region) return config.region;
-    if (process.env.AWS_REGION) return process.env.AWS_REGION;
-    return "us-east-1";
+    if (config?.region) {
+      return config.region;
+    }
+    return this.getDefaultRegion();
+  }
+
+  private getDefaultRegion(): string {
+    return process.env.AWS_REGION || "us-east-1";
   }
 
   private getCredentials(config?: BedrockConfig): CredentialsType {
@@ -188,6 +193,8 @@ ${userMappings}`;
   }
 
   private hasValidContent(content: unknown[]): boolean {
-    return content?.[0] && !!(content[0] as Record<string, unknown>).text;
+    if (!content?.[0]) return false;
+    const firstContent = content[0] as Record<string, unknown>;
+    return !!(firstContent.text);
   }
 }

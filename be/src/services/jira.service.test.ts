@@ -138,6 +138,31 @@ describe("JiraService", () => {
     });
   });
 
+  describe("getUserData", () => {
+    it("should fetch current user data", async () => {
+      const mockUserData = {
+        accountId: "current-user",
+        displayName: "Current User",
+        emailAddress: "current@example.com",
+        active: true,
+      };
+
+      mockedAxios.get.mockResolvedValue({ data: mockUserData });
+
+      const result = await service.getUserData();
+
+      expect(result).toEqual(mockUserData);
+      expect(mockedAxios.get).toHaveBeenCalledWith(
+        "https://test.atlassian.net/rest/api/3/myself",
+        {
+          headers: {
+            Authorization: "Basic base64auth",
+          },
+        }
+      );
+    });
+  });
+
   describe("getUsersByAccountIds", () => {
     it("should fetch multiple users", async () => {
       const mockUsers = [

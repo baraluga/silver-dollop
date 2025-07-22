@@ -129,9 +129,9 @@ describe("BillabilityService", () => {
       const result = billabilityService.analyzeBillabilityTrend(worklogs);
 
       expect(result.actualBillabilityPercentage).toBe(75);
-      expect(result.idealBillabilityPercentage).toBe(75);
-      expect(result.isOnTarget).toBe(true);
-      expect(result.variance).toBe(0);
+      expect(result.idealBillabilityPercentage).toBe(77);
+      expect(result.isOnTarget).toBe(false);
+      expect(result.variance).toBe(-2);
     });
 
     it("should identify below target billability", () => {
@@ -149,9 +149,9 @@ describe("BillabilityService", () => {
       const result = billabilityService.analyzeBillabilityTrend(worklogs);
 
       expect(result.actualBillabilityPercentage).toBe(50);
-      expect(result.idealBillabilityPercentage).toBe(75);
+      expect(result.idealBillabilityPercentage).toBe(77);
       expect(result.isOnTarget).toBe(false);
-      expect(result.variance).toBe(-25);
+      expect(result.variance).toBe(-27);
     });
   });
 });

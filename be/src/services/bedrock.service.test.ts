@@ -1,7 +1,10 @@
 import { BedrockService } from './bedrock.service';
 import { BedrockRuntimeClient, InvokeModelCommand } from '@aws-sdk/client-bedrock-runtime';
 
-jest.mock('@aws-sdk/client-bedrock-runtime');
+jest.mock('@aws-sdk/client-bedrock-runtime', () => ({
+  BedrockRuntimeClient: jest.fn(),
+  InvokeModelCommand: jest.fn()
+}));
 
 const mockedBedrockClient = BedrockRuntimeClient as jest.MockedClass<typeof BedrockRuntimeClient>;
 const mockedInvokeModelCommand = InvokeModelCommand as jest.MockedClass<typeof InvokeModelCommand>;
@@ -64,6 +67,18 @@ describe('BedrockService', () => {
       const service = new BedrockService();
       expect(service).toBeInstanceOf(BedrockService);
     });
+
+    it('should use default region when AWS_REGION is not set', () => {
+      delete process.env.AWS_REGION;
+      new BedrockService();
+      expect(mockedBedrockClient).toHaveBeenCalledWith({
+        region: 'us-east-1',
+        credentials: {
+          accessKeyId: 'test-key',
+          secretAccessKey: 'test-secret'
+        }
+      });
+    });
   });
 
   describe('generateInsights', () => {
@@ -73,6 +88,16 @@ describe('BedrockService', () => {
     beforeEach(() => {
       mockSend = jest.fn();
       mockedBedrockClient.prototype.send = mockSend;
+      
+      // Mock the InvokeModelCommand constructor to capture inputs
+      mockedInvokeModelCommand.mockImplementation((input) => ({
+        input,
+        middlewareStack: {
+          add: jest.fn(),
+          clone: jest.fn()
+        }
+      } as any));
+      
       service = new BedrockService();
     });
 
@@ -100,7 +125,7 @@ describe('BedrockService', () => {
       });
 
       expect(result).toContain('Test Insight');
-      expect(mockSend).toHaveBeenCalledWith(expect.any(InvokeModelCommand));
+      expect(mockSend).toHaveBeenCalledTimes(1);
     });
 
     it('should build correct payload for Bedrock', async () => {
@@ -108,16 +133,21 @@ describe('BedrockService', () => {
       
       await service.generateInsights('test query', {});
       
-      expect(mockSend).toHaveBeenCalledWith(expect.objectContaining({
-        modelId: expect.any(String),
-        body: expect.any(String),
-        contentType: 'application/json',
-        accept: 'application/json'
-      }));
+      expect(mockSend).toHaveBeenCalledTimes(1);
       
-      const callArgs = mockSend.mock.calls[0][0];
-      const payload = JSON.parse(callArgs.body);
+      const callArguments = mockSend.mock.calls[0];
+      expect(callArguments).toHaveLength(1);
       
+      const command = callArguments[0];
+      
+      // Check the command was constructed with correct parameters  
+      expect(command.input).toBeDefined();
+      expect(command.input.modelId).toBe('test-model');
+      expect(command.input.contentType).toBe('application/json');
+      expect(command.input.accept).toBe('application/json');
+      expect(command.input.body).toEqual(expect.any(String));
+      
+      const payload = JSON.parse(command.input.body);
       expect(payload).toHaveProperty('anthropic_version', 'bedrock-2023-05-31');
       expect(payload).toHaveProperty('max_tokens', 4096);
       expect(payload).toHaveProperty('temperature', 0.1);
@@ -132,8 +162,8 @@ describe('BedrockService', () => {
         userDirectory: { 'user1': 'John Doe', 'user2': 'Jane Smith' }
       });
       
-      const callArgs = mockSend.mock.calls[0][0];
-      const payload = JSON.parse(callArgs.body);
+      const command = mockSend.mock.calls[0][0];
+      const payload = JSON.parse(command.input.body);
       const prompt = payload.messages[0].content;
       
       expect(prompt).toContain('USER DIRECTORY');
