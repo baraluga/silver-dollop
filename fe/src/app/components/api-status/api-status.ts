@@ -5,6 +5,7 @@ import { ApiService } from '../../services/api.service';
 interface HealthCheck {
   status: string;
   message: string;
+  provider?: string;
 }
 
 interface HealthResponse {
@@ -80,6 +81,12 @@ export class ApiStatusComponent implements OnInit {
   private extractMessage(check: HealthCheck | undefined): string {
     if (!check) return '';
     return check.message;
+  }
+
+  // eslint-disable-next-line complexity
+  getAIProvider(): string {
+    const aiCheck = this.getServiceCheck('ai');
+    return aiCheck?.provider || 'AI';
   }
 
   hasErrors(): boolean {

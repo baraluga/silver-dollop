@@ -36,7 +36,7 @@ describe('ApiStatusComponent', () => {
         backend: { status: 'healthy', message: 'Backend is running' },
         tempo: { status: 'healthy', message: 'Tempo API is accessible' },
         jira: { status: 'healthy', message: 'JIRA API is accessible' },
-        ai: { status: 'healthy', message: 'AI service is accessible' }
+        ai: { status: 'healthy', message: 'AI service is accessible', provider: 'GEMINI' }
       }
     };
 
@@ -58,7 +58,7 @@ describe('ApiStatusComponent', () => {
         backend: { status: 'healthy', message: 'Backend is running' },
         tempo: { status: 'error', message: 'Tempo API connection failed. Check TEMPO_API_TOKEN in .env file' },
         jira: { status: 'healthy', message: 'JIRA API is accessible' },
-        ai: { status: 'healthy', message: 'AI service is accessible' }
+        ai: { status: 'healthy', message: 'AI service is accessible', provider: 'GEMINI' }
       }
     };
 
@@ -90,7 +90,7 @@ describe('ApiStatusComponent', () => {
         backend: { status: 'healthy', message: 'Backend is running' },
         tempo: { status: 'healthy', message: 'Tempo API is accessible' },
         jira: { status: 'healthy', message: 'JIRA API is accessible' },
-        ai: { status: 'error', message: 'AI service connection failed. Check AI_API_KEY in .env file' }
+        ai: { status: 'error', message: 'AI service connection failed. Check AI_API_KEY in .env file', provider: 'GEMINI' }
       }
     };
 
@@ -110,7 +110,7 @@ describe('ApiStatusComponent', () => {
         backend: { status: 'healthy', message: 'Backend is running' },
         tempo: { status: 'healthy', message: 'Tempo API is accessible' },
         jira: { status: 'healthy', message: 'JIRA API is accessible' },
-        ai: { status: 'healthy', message: 'AI service is accessible' }
+        ai: { status: 'healthy', message: 'AI service is accessible', provider: 'GEMINI' }
       }
     };
 
@@ -139,7 +139,7 @@ describe('ApiStatusComponent', () => {
         backend: { status: 'healthy', message: 'Backend is running' },
         tempo: { status: 'healthy', message: 'Tempo API is accessible' },
         jira: { status: 'healthy', message: 'JIRA API is accessible' },
-        ai: { status: 'healthy', message: 'AI service is accessible' }
+        ai: { status: 'healthy', message: 'AI service is accessible', provider: 'GEMINI' }
       }
     };
 
@@ -172,7 +172,7 @@ describe('ApiStatusComponent', () => {
         backend: { status: 'healthy', message: 'Backend is running' },
         tempo: { status: 'error', message: 'Tempo API connection failed' },
         jira: { status: 'healthy', message: 'JIRA API is accessible' },
-        ai: { status: 'healthy', message: 'AI service is accessible' }
+        ai: { status: 'healthy', message: 'AI service is accessible', provider: 'GEMINI' }
       }
     };
 
@@ -191,4 +191,47 @@ describe('ApiStatusComponent', () => {
     
     expect(component.isConfirmedHealthy).toBe(false);
   });
+
+  it('should return AI provider from health check', () => {
+    const healthyResponse = {
+      status: 'healthy',
+      checks: {
+        backend: { status: 'healthy', message: 'Backend is running' },
+        tempo: { status: 'healthy', message: 'Tempo API is accessible' },
+        jira: { status: 'healthy', message: 'JIRA API is accessible' },
+        ai: { status: 'healthy', message: 'AI service is accessible', provider: 'BEDROCK' }
+      }
+    };
+
+    mockApiService.getHealthStatus.mockReturnValue(of(healthyResponse));
+
+    fixture.detectChanges();
+
+    expect(component.getAIProvider()).toBe('BEDROCK');
+  });
+
+  it('should return default AI when provider is not available', () => {
+    const healthyResponse = {
+      status: 'healthy',
+      checks: {
+        backend: { status: 'healthy', message: 'Backend is running' },
+        tempo: { status: 'healthy', message: 'Tempo API is accessible' },
+        jira: { status: 'healthy', message: 'JIRA API is accessible' },
+        ai: { status: 'healthy', message: 'AI service is accessible' }
+      }
+    };
+
+    mockApiService.getHealthStatus.mockReturnValue(of(healthyResponse));
+
+    fixture.detectChanges();
+
+    expect(component.getAIProvider()).toBe('AI');
+  });
+
+  it('should return default AI when healthStatus is null', () => {
+    component.healthStatus = null;
+    
+    expect(component.getAIProvider()).toBe('AI');
+  });
+
 });

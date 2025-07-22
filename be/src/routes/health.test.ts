@@ -29,6 +29,7 @@ describe("Health Routes", () => {
   });
 
   it("should return healthy status when all APIs are accessible", async () => {
+    delete process.env.AI_PROVIDER;
     mockTempoService.getTeamData.mockResolvedValue({ teams: [] });
     mockJiraService.getUserData.mockResolvedValue({ displayName: "Test User" });
     mockAIServiceFactory.create.mockReturnValue({
@@ -48,6 +49,7 @@ describe("Health Routes", () => {
     expect(result.checks.tempo.status).toBe("healthy");
     expect(result.checks.jira.status).toBe("healthy");
     expect(result.checks.ai.status).toBe("healthy");
+    expect(result.checks.ai.provider).toBe("GEMINI");
   });
 
   it("should return degraded status when Tempo API fails", async () => {
@@ -95,6 +97,7 @@ describe("Health Routes", () => {
   });
 
   it("should return degraded status when AI service fails", async () => {
+    delete process.env.AI_PROVIDER;
     mockTempoService.getTeamData.mockResolvedValue({ teams: [] });
     mockJiraService.getUserData.mockResolvedValue({ displayName: "Test User" });
     mockAIServiceFactory.create.mockReturnValue({
@@ -112,6 +115,7 @@ describe("Health Routes", () => {
     expect(result.status).toBe("degraded");
     expect(result.checks.ai.status).toBe("error");
     expect(result.checks.ai.message).toContain("AI connection failed");
+    expect(result.checks.ai.provider).toBe("GEMINI");
   });
 
   it("should return bedrock-specific error message when bedrock provider fails", async () => {
@@ -135,5 +139,33 @@ describe("Health Routes", () => {
     expect(result.checks.ai.status).toBe("error");
     expect(result.checks.ai.message).toContain("BEDROCK AI connection failed");
     expect(result.checks.ai.message).toContain("AWS_REGION, AWS_ACCESS_KEY_ID, and AWS_SECRET_ACCESS_KEY");
+    expect(result.checks.ai.provider).toBe("BEDROCK");
+    
+    delete process.env.AI_PROVIDER;
+  });
+
+  it("should return bedrock provider when bedrock is healthy", async () => {
+    process.env.AI_PROVIDER = "bedrock";
+    
+    mockTempoService.getTeamData.mockResolvedValue({ teams: [] });
+    mockJiraService.getUserData.mockResolvedValue({ displayName: "Test User" });
+    mockAIServiceFactory.create.mockReturnValue({
+      generateInsights: jest.fn().mockResolvedValue("Test response"),
+    } as any);
+
+    const response = await server.inject({
+      method: "GET",
+      url: "/health",
+    });
+
+    expect(response.statusCode).toBe(200);
+
+    const result = JSON.parse(response.body);
+    expect(result.status).toBe("healthy");
+    expect(result.checks.ai.status).toBe("healthy");
+    expect(result.checks.ai.provider).toBe("BEDROCK");
+    expect(result.checks.ai.message).toContain("BEDROCK AI service is accessible");
+    
+    delete process.env.AI_PROVIDER;
   });
 });

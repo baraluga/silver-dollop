@@ -44,7 +44,10 @@
                [class.error]="!isLoading && !isHealthy('ai')"
                [class.pulse]="!isLoading && isConfirmedHealthy && isHealthy('ai')">
           </div>
-          <span class="text-xs text-gray-600">AI</span>
+          <span class="text-xs text-gray-600" 
+                [title]="'AI Provider: ' + getAIProvider()">
+            {{ getAIProvider() }}
+          </span>
         </div>
       </div>
     </div>

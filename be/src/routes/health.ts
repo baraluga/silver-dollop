@@ -6,6 +6,7 @@ import { AIServiceFactory } from "../services/aiServiceFactory";
 interface HealthCheck {
   status: string;
   message: string;
+  provider?: string;
 }
 
 interface HealthChecks {
@@ -55,7 +56,8 @@ function buildHealthyResponse(): HealthCheck {
   const provider = process.env.AI_PROVIDER || "gemini";
   return { 
     status: "healthy", 
-    message: `${provider.toUpperCase()} AI service is accessible` 
+    message: `${provider.toUpperCase()} AI service is accessible`,
+    provider: provider.toUpperCase()
   };
 }
 
@@ -65,6 +67,7 @@ function buildErrorResponse(): HealthCheck {
   return {
     status: "error",
     message: `${provider.toUpperCase()} AI connection failed. Check ${envVars} in .env file`,
+    provider: provider.toUpperCase()
   };
 }
 

@@ -22,7 +22,7 @@ describe('App', () => {
           backend: { status: 'healthy', message: 'Backend is running' },
           tempo: { status: 'healthy', message: 'Tempo API is accessible' },
           jira: { status: 'healthy', message: 'JIRA API is accessible' },
-          ai: { status: 'healthy', message: 'AI service is accessible' }
+          ai: { status: 'healthy', message: 'AI service is accessible', provider: 'GEMINI' }
         }
       })),
     } as any;

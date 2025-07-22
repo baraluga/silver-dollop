@@ -7,6 +7,7 @@ import { Insight, InsightRequest } from '../models/insight.interface';
 interface HealthCheck {
   status: string;
   message: string;
+  provider?: string;
 }
 
 interface HealthResponse {
