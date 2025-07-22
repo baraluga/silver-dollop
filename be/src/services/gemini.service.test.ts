@@ -1,4 +1,5 @@
 import { GeminiService } from "./gemini.service";
+import { AIService } from "../interfaces/aiService.interface";
 
 jest.mock("@google/generative-ai", () => ({
   GoogleGenerativeAI: jest.fn().mockImplementation(() => ({
@@ -28,6 +29,11 @@ describe("GeminiService", () => {
 
   it("should be created", () => {
     expect(service).toBeTruthy();
+  });
+
+  it("should implement AIService interface", () => {
+    expect(service).toHaveProperty('generateInsights');
+    expect(typeof service.generateInsights).toBe('function');
   });
 
   it("should throw error without API key", () => {

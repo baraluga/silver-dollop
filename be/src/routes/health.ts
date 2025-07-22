@@ -1,7 +1,7 @@
 import { FastifyInstance } from "fastify";
 import { tempoService } from "../services/tempo.service";
 import { jiraService } from "../services/jira.service";
-import { GeminiService } from "../services/gemini.service";
+import { AIServiceFactory } from "../services/aiServiceFactory";
 
 interface HealthCheck {
   status: string;
@@ -12,7 +12,7 @@ interface HealthChecks {
   backend: HealthCheck;
   tempo: HealthCheck;
   jira: HealthCheck;
-  gemini: HealthCheck;
+  ai: HealthCheck;
 }
 
 async function checkTempoHealth(): Promise<HealthCheck> {
@@ -41,17 +41,37 @@ async function checkJiraHealth(): Promise<HealthCheck> {
   }
 }
 
-async function checkGeminiHealth(): Promise<HealthCheck> {
+async function checkAIHealth(): Promise<HealthCheck> {
   try {
-    const geminiService = new GeminiService();
-    await geminiService.generateInsights("test", {});
-    return { status: "healthy", message: "Gemini AI is accessible" };
+    const aiService = AIServiceFactory.create();
+    await aiService.generateInsights("test", {});
+    return buildHealthyResponse();
   } catch {
-    return {
-      status: "error",
-      message: "Gemini AI connection failed. Check GEMINI_API_KEY in .env file",
-    };
+    return buildErrorResponse();
   }
+}
+
+function buildHealthyResponse(): HealthCheck {
+  const provider = process.env.AI_PROVIDER || "gemini";
+  return { 
+    status: "healthy", 
+    message: `${provider.toUpperCase()} AI service is accessible` 
+  };
+}
+
+function buildErrorResponse(): HealthCheck {
+  const provider = process.env.AI_PROVIDER || "gemini";
+  const envVars = getRequiredEnvVars(provider);
+  return {
+    status: "error",
+    message: `${provider.toUpperCase()} AI connection failed. Check ${envVars} in .env file`,
+  };
+}
+
+function getRequiredEnvVars(provider: string): string {
+  return provider === "bedrock" 
+    ? "AWS_REGION, AWS_ACCESS_KEY_ID, and AWS_SECRET_ACCESS_KEY"
+    : "GEMINI_API_KEY";
 }
 
 function determineOverallStatus(checks: HealthChecks): string {
@@ -67,7 +87,7 @@ export default async function healthRoutes(fastify: FastifyInstance) {
       backend: { status: "healthy", message: "Backend is running" },
       tempo: await checkTempoHealth(),
       jira: await checkJiraHealth(),
-      gemini: await checkGeminiHealth(),
+      ai: await checkAIHealth(),
     };
 
     return {

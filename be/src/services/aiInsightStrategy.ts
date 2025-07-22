@@ -1,5 +1,6 @@
 import { DateParsingService } from "./date-parsing.service";
-import { GeminiService, QueryContext } from "./gemini.service";
+import { AIServiceFactory } from "./aiServiceFactory";
+import { QueryContext } from "../interfaces/aiService.interface";
 import { jiraService } from "./jira.service";
 import { teamDataService, TeamInsights } from "./team-data.service";
 import { ProjectInsightsService } from "./project-insights.service";
@@ -113,9 +114,9 @@ export async function processQueryWithAI(
 async function getAIInsights(
   query: string
 ): Promise<Omit<InsightResponse, "timestamp">> {
-  const geminiService = new GeminiService();
+  const aiService = AIServiceFactory.create();
   const context = await getQueryContext(query);
-  const aiResponseText = await geminiService.generateInsights(query, context);
+  const aiResponseText = await aiService.generateInsights(query, context);
   return parseAIResponse(aiResponseText);
 }
 

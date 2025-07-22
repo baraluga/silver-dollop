@@ -1,13 +1,7 @@
 import { GenerativeModel, GoogleGenerativeAI } from "@google/generative-ai";
+import { AIService, QueryContext } from "../interfaces/aiService.interface";
 
-export interface QueryContext {
-  availabilityData?: unknown;
-  billabilityData?: unknown;
-  userDirectory?: Record<string, string>;
-  [key: string]: unknown;
-}
-
-export class GeminiService {
+export class GeminiService implements AIService {
   private genAI!: GoogleGenerativeAI;
   private model!: GenerativeModel;
 
