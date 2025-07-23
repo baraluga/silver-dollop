@@ -21,12 +21,15 @@ interface ToolRequest {
 }
 
 async function importMCPModules(): Promise<MCPModules> {
-  const { Server } = await import("@modelcontextprotocol/sdk/server/index.js");
-  const { StdioServerTransport } = await import("@modelcontextprotocol/sdk/server/stdio.js");
+  // Use eval to prevent TypeScript from transpiling dynamic imports to require()
+  const dynamicImport = eval('(specifier) => import(specifier)');
+  
+  const { Server } = await dynamicImport("@modelcontextprotocol/sdk/server/index.js");
+  const { StdioServerTransport } = await dynamicImport("@modelcontextprotocol/sdk/server/stdio.js");
   const {
     CallToolRequestSchema,
     ListToolsRequestSchema,
-  } = await import("@modelcontextprotocol/sdk/types.js");
+  } = await dynamicImport("@modelcontextprotocol/sdk/types.js");
 
   return {
     Server,
