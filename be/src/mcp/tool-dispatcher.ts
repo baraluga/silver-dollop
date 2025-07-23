@@ -18,8 +18,8 @@ export class ToolDispatcher {
       return this.handlers.handleGetMyself();
     }
     
-    if (name === "generate_team_insights") {
-      return this.handlers.handleGenerateInsights(args);
+    if (name === "parse_date_query") {
+      return this.handlers.handleParseDateQuery(args);
     }
     
     return this.dispatchData(name, args);
@@ -32,6 +32,14 @@ export class ToolDispatcher {
     
     if (name === "get_team_billability") {
       return this.handlers.handleGetTeamBillability(args);
+    }
+    
+    if (name === "get_raw_worklogs") {
+      return this.handlers.handleGetRawWorklogs(args);
+    }
+    
+    if (name === "get_tempo_plans") {
+      return this.handlers.handleGetTempoPlans(args);
     }
     
     return this.dispatchUtility(name, args);
@@ -52,10 +60,6 @@ export class ToolDispatcher {
     
     if (name === "get_user_details") {
       return this.handlers.handleGetUserDetails(args);
-    }
-    
-    if (name === "parse_date_query") {
-      return this.handlers.handleParseDateQuery(args);
     }
     
     throw new Error(`Unknown tool: ${name}`);

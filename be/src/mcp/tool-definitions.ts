@@ -11,22 +11,6 @@ export function getBasicToolDefinitions() {
       },
     },
     {
-      name: "generate_team_insights",
-      description: "Generate AI-powered insights for team performance based on natural language queries",
-      inputSchema: {
-        type: "object",
-        properties: {
-          query: {
-            type: "string",
-            description: "Natural language query about team performance (e.g. 'who is the highest billable member yesterday?')",
-            minLength: 1,
-            maxLength: 500,
-          },
-        },
-        required: ["query"],
-      },
-    },
-    {
       name: "parse_date_query",
       description: "Parse natural language date expressions into date ranges",
       inputSchema: {
@@ -134,6 +118,50 @@ export function getDataToolDefinitions() {
           },
         },
         required: ["userId"],
+      },
+    },
+    {
+      name: "get_raw_worklogs",
+      description: "Get raw worklog entries with time spent, project details, and billability info",
+      inputSchema: {
+        type: "object",
+        properties: {
+          from: {
+            type: "string",
+            description: "Start date in YYYY-MM-DD format (defaults to current week)",
+            pattern: "^\\d{4}-\\d{2}-\\d{2}$",
+          },
+          to: {
+            type: "string",
+            description: "End date in YYYY-MM-DD format (defaults to current week)",
+            pattern: "^\\d{4}-\\d{2}-\\d{2}$",
+          },
+          userId: {
+            type: "string",
+            description: "Optional: Filter worklogs for specific user only",
+          },
+        },
+        required: [],
+      },
+    },
+    {
+      name: "get_tempo_plans",
+      description: "Get raw Tempo planning data showing planned vs actual capacity",
+      inputSchema: {
+        type: "object",
+        properties: {
+          from: {
+            type: "string",
+            description: "Start date in YYYY-MM-DD format (defaults to current week)",
+            pattern: "^\\d{4}-\\d{2}-\\d{2}$",
+          },
+          to: {
+            type: "string",
+            description: "End date in YYYY-MM-DD format (defaults to current week)",
+            pattern: "^\\d{4}-\\d{2}-\\d{2}$",
+          },
+        },
+        required: [],
       },
     },
   ];

@@ -8,11 +8,6 @@ export class ToolHandlers {
     return this.createResponse(userData);
   }
 
-  async handleGenerateInsights(args: any) {
-    const { query } = args;
-    const result = await this.services.processQueryWithAI(query);
-    return this.createResponse(result);
-  }
 
   async handleGetTeamAvailability(args: any) {
     const period = this.getPeriodFromArgs(args);
@@ -122,6 +117,84 @@ export class ToolHandlers {
     } catch (error) {
       throw new Error(`Failed to get user details: ${error instanceof Error ? error.message : String(error)}`);
     }
+  }
+
+  async handleGetRawWorklogs(args: any) {
+    const period = this.getPeriodFromArgs(args);
+    const teamData = await this.services.teamDataService.getTeamInsights(period);
+    
+    let worklogs = teamData.worklogs;
+    
+    // Filter by user if specified
+    if (args.userId) {
+      worklogs = worklogs.filter((worklog: any) => 
+        worklog.worker && worklog.worker.accountId === args.userId
+      );
+    }
+    
+    // Return raw worklogs with essential fields
+    const rawWorklogs = worklogs.map((worklog: any) => ({
+      id: worklog.id,
+      startDate: worklog.startDate,
+      timeSpentSeconds: worklog.timeSpentSeconds,
+      timeSpentHours: Math.round(worklog.timeSpentSeconds / 3600 * 100) / 100,
+      billableSeconds: worklog.billableSeconds,
+      billableHours: Math.round(worklog.billableSeconds / 3600 * 100) / 100,
+      worker: {
+        accountId: worklog.worker?.accountId,
+        displayName: worklog.worker?.displayName,
+      },
+      issue: {
+        key: worklog.issue?.key,
+        summary: worklog.issue?.summary,
+      },
+      projectKey: worklog.projectKey,
+      projectName: worklog.projectName,
+      description: worklog.description,
+    }));
+    
+    return this.createResponse({
+      worklogs: rawWorklogs,
+      totalWorklogs: rawWorklogs.length,
+      period: period,
+      totalHours: Math.round(rawWorklogs.reduce((sum: number, w: any) => sum + w.timeSpentHours, 0) * 100) / 100,
+      totalBillableHours: Math.round(rawWorklogs.reduce((sum: number, w: any) => sum + w.billableHours, 0) * 100) / 100,
+    });
+  }
+
+  async handleGetTempoPlans(args: any) {
+    const period = this.getPeriodFromArgs(args);
+    
+    // Access Tempo service directly to get raw plans
+    const { TempoService } = require("../services/tempo.service");
+    const tempoService = new TempoService();
+    
+    const plans = await tempoService.getPlans(period.from, period.to);
+    
+    // Return raw plans with essential fields
+    const rawPlans = plans.map((plan: any) => ({
+      id: plan.id,
+      startDate: plan.startDate,
+      endDate: plan.endDate,
+      totalPlannedSecondsInScope: plan.totalPlannedSecondsInScope,
+      totalPlannedHours: Math.round(plan.totalPlannedSecondsInScope / 3600 * 100) / 100,
+      assignee: {
+        accountId: plan.assignee?.accountId,
+        displayName: plan.assignee?.displayName,
+      },
+      planItem: {
+        id: plan.planItem?.id,
+        name: plan.planItem?.name,
+        type: plan.planItem?.type,
+      },
+    }));
+    
+    return this.createResponse({
+      plans: rawPlans,
+      totalPlans: rawPlans.length,
+      period: period,
+      totalPlannedHours: Math.round(rawPlans.reduce((sum: number, p: any) => sum + p.totalPlannedHours, 0) * 100) / 100,
+    });
   }
 
   async handleParseDateQuery(args: any) {
