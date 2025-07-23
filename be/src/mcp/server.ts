@@ -2,7 +2,9 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/naming-convention */
-/* eslint-disable max-params */
+
+import { getAllToolDefinitions } from "./tool-definitions";
+import { ToolDispatcher } from "./tool-dispatcher";
 
 interface MCPModules {
   Server: any;
@@ -14,6 +16,7 @@ interface MCPModules {
 interface ToolRequest {
   params: {
     name: string;
+    arguments?: any;
   };
 }
 
@@ -33,16 +36,27 @@ async function importMCPModules(): Promise<MCPModules> {
   };
 }
 
-function createJiraService() {
+function createServices() {
   const { JiraService } = require("../services/jira.service");
-  return new JiraService();
+  const { processQueryWithAI } = require("../services/aiInsightStrategy");
+  const { teamDataService } = require("../services/team-data.service");
+  const { ProjectInsightsService } = require("../services/project-insights.service");
+  const { DateParsingService } = require("../services/date-parsing.service");
+  
+  return {
+    jiraService: new JiraService(),
+    processQueryWithAI,
+    teamDataService,
+    projectInsightsService: new ProjectInsightsService(),
+    dateParsingService: new DateParsingService(),
+  };
 }
 
 function createServer(modules: MCPModules) {
   return new modules.Server(
     {
       name: "jira-tempo-mcp-server",
-      version: "1.0.0",
+      version: "2.0.0",
     },
     {
       capabilities: {
@@ -55,75 +69,51 @@ function createServer(modules: MCPModules) {
 function setupToolsList(server: any, modules: MCPModules) {
   server.setRequestHandler(modules.ListToolsRequestSchema, async () => {
     return {
-      tools: [
-        {
-          name: "get_myself",
-          description: "Get current Jira user information (myself endpoint)",
-          inputSchema: {
-            type: "object",
-            properties: {},
-            required: [],
-          },
-        },
-      ],
+      tools: getAllToolDefinitions(),
     };
   });
 }
 
-async function handleGetMyself(jiraService: any) {
-  const userData = await jiraService.getUserData();
-  return {
-    content: [
-      {
-        type: "text",
-        text: JSON.stringify(userData, null, 2),
-      },
-    ],
-  };
-}
-
-function handleError(error: unknown) {
+function handleError(error: unknown, operation: string) {
   const message = error instanceof Error ? error.message : String(error);
   return {
     content: [
       {
         type: "text",
-        text: `Error getting user data: ${message}`,
+        text: `Error during ${operation}: ${message}`,
       },
     ],
     isError: true,
   };
 }
 
-function setupToolHandlers(server: any, modules: MCPModules, jiraService: any) {
+function setupToolHandlers(serverConfig: { server: any; modules: MCPModules; dispatcher: ToolDispatcher }) {
+  const { server, modules, dispatcher } = serverConfig;
   server.setRequestHandler(modules.CallToolRequestSchema, async (request: ToolRequest) => {
-    const { name } = request.params;
+    const { name, arguments: args = {} } = request.params;
 
-    if (name === "get_myself") {
-      try {
-        return await handleGetMyself(jiraService);
-      } catch (error) {
-        return handleError(error);
-      }
+    try {
+      return await dispatcher.dispatch(name, args);
+    } catch (error) {
+      return handleError(error, name);
     }
-
-    throw new Error(`Unknown tool: ${name}`);
   });
 }
 
 async function startServer(server: any, modules: MCPModules) {
   const transport = new modules.StdioServerTransport();
   await server.connect(transport);
-  console.error("Jira/Tempo MCP server running on stdio");
+  console.error("Jira/Tempo MCP server running on stdio with comprehensive insights");
 }
 
 async function createMCPServer() {
   const modules = await importMCPModules();
-  const jiraService = createJiraService();
+  const services = createServices();
+  const dispatcher = new ToolDispatcher(services);
   const server = createServer(modules);
   
   setupToolsList(server, modules);
-  setupToolHandlers(server, modules, jiraService);
+  setupToolHandlers({ server, modules, dispatcher });
   await startServer(server, modules);
 }
 
