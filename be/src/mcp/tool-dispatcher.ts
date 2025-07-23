@@ -50,6 +50,10 @@ export class ToolDispatcher {
       return this.handlers.handleListTeamMembers();
     }
     
+    if (name === "get_user_details") {
+      return this.handlers.handleGetUserDetails(args);
+    }
+    
     if (name === "parse_date_query") {
       return this.handlers.handleParseDateQuery(args);
     }

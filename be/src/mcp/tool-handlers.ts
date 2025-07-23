@@ -59,12 +59,69 @@ export class ToolHandlers {
     const period = this.getCurrentWeekPeriod();
     const teamData = await this.services.teamDataService.getTeamInsights(period);
     
-    const members = teamData.availability.userAvailabilities.map((user: any) => ({
-      userId: user.userId,
-      userName: user.userName,
-    }));
+    // Get unique user IDs from both availability and billability data
+    const userIds = new Set<string>();
+    teamData.availability.userAvailabilities.forEach((user: any) => {
+      userIds.add(user.userId);
+    });
+    teamData.billability.userBillabilities.forEach((user: any) => {
+      userIds.add(user.userId);
+    });
     
-    return this.createResponse({ members, totalMembers: members.length });
+    // Get detailed user info from Jira for each user
+    const members = [];
+    for (const userId of userIds) {
+      try {
+        const userDetails = await this.services.jiraService.getUsersByAccountIds([userId]);
+        if (userDetails && userDetails.length > 0) {
+          const user = userDetails[0];
+          members.push({
+            userId: user.accountId,
+            userName: user.displayName,
+            email: user.emailAddress,
+            active: user.active,
+          });
+        } else {
+          // Fallback to availability data if Jira lookup fails
+          const availUser = teamData.availability.userAvailabilities.find((u: any) => u.userId === userId);
+          members.push({
+            userId: userId,
+            userName: availUser?.userName || userId,
+            email: null,
+            active: true,
+          });
+        }
+      } catch (error) {
+        // Fallback for failed lookups
+        const availUser = teamData.availability.userAvailabilities.find((u: any) => u.userId === userId);
+        members.push({
+          userId: userId,
+          userName: availUser?.userName || userId,
+          email: null,
+          active: true,
+        });
+      }
+    }
+    
+    return this.createResponse({ 
+      members: members.sort((a, b) => a.userName.localeCompare(b.userName)),
+      totalMembers: members.length 
+    });
+  }
+
+  async handleGetUserDetails(args: any) {
+    const { userId } = args;
+    
+    try {
+      const userDetails = await this.services.jiraService.getUsersByAccountIds([userId]);
+      if (userDetails && userDetails.length > 0) {
+        return this.createResponse(userDetails[0]);
+      } else {
+        throw new Error(`User with ID ${userId} not found`);
+      }
+    } catch (error) {
+      throw new Error(`Failed to get user details: ${error instanceof Error ? error.message : String(error)}`);
+    }
   }
 
   async handleParseDateQuery(args: any) {

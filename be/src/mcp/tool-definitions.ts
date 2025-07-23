@@ -122,6 +122,20 @@ export function getDataToolDefinitions() {
         required: [],
       },
     },
+    {
+      name: "get_user_details",
+      description: "Get detailed information for a specific user by their account ID",
+      inputSchema: {
+        type: "object",
+        properties: {
+          userId: {
+            type: "string",
+            description: "The Jira account ID of the user to get details for",
+          },
+        },
+        required: ["userId"],
+      },
+    },
   ];
 }
 
