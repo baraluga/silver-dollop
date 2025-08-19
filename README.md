@@ -14,7 +14,6 @@ This project integrates Jira and GenAI capabilities with Tempo (time tracking) t
 
 - **Backend**: Located in `be/` directory
 - **Frontend**: Located in `fe/` directory  
-- **MCP Integration**: Model Context Protocol for AI agent capabilities
 - **APIs**: Jira API, Tempo API
 - **AI**: GenAI integration for analysis and recommendations
 
@@ -77,7 +76,6 @@ This project integrates Jira and GenAI capabilities with Tempo (time tracking) t
 - [ ] Generate utilization reports
 
 #### AI Integration
-- [ ] Implement MCP for AI agent communication
 - [ ] Develop prompts for resource analysis
 - [ ] Generate natural language insights
 - [ ] Provide actionable recommendations
@@ -116,7 +114,6 @@ This project integrates Jira and GenAI capabilities with Tempo (time tracking) t
 - **Tempo Integration Service**: Handle Planner and Time Logs APIs
 - **Jira Integration Service**: Project and issue data management
 - **Analysis Engine**: Calculate availability and billability metrics
-- **MCP Server**: AI agent communication layer
 - **API Gateway**: Unified endpoint for frontend consumption
 
 ### Frontend Components
@@ -139,12 +136,11 @@ The project uses the following pre-configured API credentials:
 
 ## Next Steps
 
-1. Set up MCP server architecture
-2. Implement Tempo API integration for both Planner and Time Logs
-3. Develop core availability and billability calculation engines
-4. Create AI prompts and analysis workflows
-5. Build frontend dashboard and reporting interface
-6. Test with real team data and iterate based on feedback
+1. Implement Tempo API integration for both Planner and Time Logs
+2. Develop core availability and billability calculation engines
+3. Create AI prompts and analysis workflows
+4. Build frontend dashboard and reporting interface
+5. Test with real team data and iterate based on feedback
 
 ## Development Notes
 

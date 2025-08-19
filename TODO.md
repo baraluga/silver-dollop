@@ -104,7 +104,6 @@ src/
 
 ## Future Enhancements (Post-MVP)
 
-- Add MCP layer for advanced AI agent capabilities
 - Multiple page navigation
 - Historical data visualization
 - Advanced filtering options
