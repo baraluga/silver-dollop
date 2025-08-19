@@ -2,4 +2,34 @@ import { getTeamBillability } from './get-team-billability';
 import { getTeamAvailability } from './get-team-availability';
 import { getProjectInsights } from './get-project-insights';
 
-export { getTeamBillability, getTeamAvailability, getProjectInsights };
+// Atomic raw-data tools
+import { getTempoWorklogs } from './raw-data/get-tempo-worklogs';
+import { getTempoPlans } from './raw-data/get-tempo-plans';
+import { getJiraUsers } from './raw-data/get-jira-users';
+import { getJiraIssues } from './raw-data/get-jira-issues';
+// Atomic calculation tools
+import { calculateBillability } from './calculations/calculate-billability';
+import { calculateAvailability } from './calculations/calculate-availability';
+import { analyzeProjectDistribution } from './calculations/analyze-project-distribution';
+// Atomic enrichment tools
+import { getUserTicketWork } from './enrichment/get-user-ticket-work';
+import { getProjectTicketBreakdown } from './enrichment/get-project-ticket-breakdown';
+
+export {
+  // Existing monolithic tools
+  getTeamBillability,
+  getTeamAvailability,
+  getProjectInsights,
+  // New atomic raw-data tools
+  getTempoWorklogs,
+  getTempoPlans,
+  getJiraUsers,
+  getJiraIssues,
+  // New atomic calculation tools
+  calculateBillability,
+  calculateAvailability,
+  analyzeProjectDistribution,
+  // New atomic enrichment tools
+  getUserTicketWork,
+  getProjectTicketBreakdown
+};
