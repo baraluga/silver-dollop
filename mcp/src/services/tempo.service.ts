@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { TempoWorklog } from '../types/tempo.types';
+import { TempoWorklog, TempoPlan } from '../types/tempo.types';
 
 export class TempoService {
   private readonly baseUrl = 'https://api.tempo.io/4';
@@ -74,5 +74,60 @@ export class TempoService {
   extractUserName(userId: string, worklogs: TempoWorklog[]): string {
     const worklog = worklogs.find(w => w.author.accountId === userId);
     return worklog?.author.displayName || 'Unknown User';
+  }
+
+  async getPlans(from: string, to: string): Promise<TempoPlan[]> {
+    try {
+      const response = await axios.get(`${this.baseUrl}/plans`, {
+        headers: {
+          'Authorization': `Bearer ${this.apiToken}`,
+          'Content-Type': 'application/json'
+        },
+        params: {
+          from,
+          to,
+          limit: 1000
+        }
+      });
+
+      return response.data.results || [];
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        throw new Error(`Tempo Plans API error: ${error.response?.status} ${error.response?.statusText}`);
+      }
+      throw error;
+    }
+  }
+
+  filterUserPlans(userId: string, plans: TempoPlan[]): TempoPlan[] {
+    return plans.filter(plan => plan.assignee.accountId === userId);
+  }
+
+  calculatePlannedHours(plans: TempoPlan[]): number {
+    const totalSeconds = plans.reduce((sum, plan) => sum + plan.totalPlannedSecondsInScope, 0);
+    return this.convertSecondsToHours(totalSeconds);
+  }
+
+  extractUniqueUserIdsFromPlansAndWorklogs(plans: TempoPlan[], worklogs: TempoWorklog[]): string[] {
+    const userIds = new Set<string>();
+    
+    plans.forEach(plan => {
+      userIds.add(plan.assignee.accountId);
+    });
+    
+    worklogs.forEach(worklog => {
+      userIds.add(worklog.author.accountId);
+    });
+    
+    return Array.from(userIds);
+  }
+
+  extractUserNameFromPlansOrWorklogs(userId: string, plans: TempoPlan[], worklogs: TempoWorklog[]): string {
+    const plan = plans.find(p => p.assignee.accountId === userId);
+    if (plan) {
+      return plan.assignee.displayName;
+    }
+    
+    return this.extractUserName(userId, worklogs);
   }
 }

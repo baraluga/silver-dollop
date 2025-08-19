@@ -37,3 +37,52 @@ export interface TeamBillability {
     to: string;
   };
 }
+
+export interface TempoPlan {
+  id: number;
+  assignee: {
+    accountId: string;
+    displayName: string;
+  };
+  plannedSecondsPerDay: number;
+  totalPlannedSecondsInScope: number;
+  startDate: string;
+  endDate: string;
+}
+
+export interface UserAvailability {
+  userId: string;
+  userName: string;
+  plannedHours: number;
+  actualHours: number;
+  availabilityPercentage: number;
+}
+
+export interface TeamAvailability {
+  totalPlannedHours: number;
+  totalActualHours: number;
+  teamAvailabilityPercentage: number;
+  userAvailabilities: UserAvailability[];
+  period: {
+    from: string;
+    to: string;
+  };
+}
+
+export interface ProjectBreakdownItem {
+  projectKey: string;
+  projectName: string;
+  totalHours: number;
+  billableHours: number;
+  percentageOfTotal: number;
+}
+
+export interface ProjectInsights {
+  totalProjects: number;
+  projectBreakdown: ProjectBreakdownItem[];
+  topProjects: ProjectBreakdownItem[];
+  period: {
+    from: string;
+    to: string;
+  };
+}

@@ -16,7 +16,7 @@ This MCP server is completely independent from the `be/` and `fe/` directories. 
 
 ### `get_team_billability`
 
-Returns raw billability data for team analysis.
+Returns raw billability data for team analysis - answers "How billable is a person/team?"
 
 **Parameters:**
 - `from` (required): Start date in YYYY-MM-DD format
@@ -38,6 +38,74 @@ Returns raw billability data for team analysis.
       "billableHours": 35.0,
       "nonBillableHours": 5.0,
       "billabilityPercentage": 87.5
+    }
+  ],
+  "period": {
+    "from": "2025-01-13",
+    "to": "2025-01-19"
+  }
+}
+```
+
+### `get_team_availability`
+
+Returns planned vs actual hours data - answers "Who's most available for new work?"
+
+**Parameters:**
+- `from` (required): Start date in YYYY-MM-DD format
+- `to` (required): End date in YYYY-MM-DD format  
+- `userId` (optional): Specific user account ID (returns all users if not specified)
+
+**Returns:**
+```json
+{
+  "totalPlannedHours": 400.0,
+  "totalActualHours": 350.5,
+  "teamAvailabilityPercentage": 87.63,
+  "userAvailabilities": [
+    {
+      "userId": "user123",
+      "userName": "John Doe",
+      "plannedHours": 40.0,
+      "actualHours": 35.5,
+      "availabilityPercentage": 88.75
+    }
+  ],
+  "period": {
+    "from": "2025-01-13",
+    "to": "2025-01-19"
+  }
+}
+```
+
+### `get_project_insights`
+
+Returns project-level time allocation and resource distribution.
+
+**Parameters:**
+- `from` (required): Start date in YYYY-MM-DD format
+- `to` (required): End date in YYYY-MM-DD format
+
+**Returns:**
+```json
+{
+  "totalProjects": 5,
+  "projectBreakdown": [
+    {
+      "projectKey": "PROJ",
+      "projectName": "PROJ Project",
+      "totalHours": 120.5,
+      "billableHours": 100.25,
+      "percentageOfTotal": 37.66
+    }
+  ],
+  "topProjects": [
+    {
+      "projectKey": "PROJ",
+      "projectName": "PROJ Project", 
+      "totalHours": 120.5,
+      "billableHours": 100.25,
+      "percentageOfTotal": 37.66
     }
   ],
   "period": {
@@ -107,12 +175,22 @@ Add to your Claude Desktop config:
 
 Once configured, you can ask Claude questions like:
 
+**Billability Questions:**
 - "What's our team billability this week?"
 - "Who has the highest billable hours?"
 - "Show me John's billability for last month"
-- "Compare team performance across different time periods"
 
-**Important**: Claude must provide specific date ranges. The server requires explicit `from` and `to` dates - it does not interpret relative dates like "this week" or "last month". The MCP client (Claude) handles date interpretation and passes exact dates to the tool.
+**Availability Questions:**
+- "Who's most available for new work this week?"
+- "What's our team capacity utilization?"
+- "Show me planned vs actual hours for the team"
+
+**Project Questions:**
+- "Which projects are consuming the most time?"
+- "What's our time distribution across projects?"
+- "Show me project resource allocation"
+
+**Important**: Claude must provide specific date ranges. The server requires explicit `from` and `to` dates - it does not interpret relative dates like "this week" or "last month". The MCP client (Claude) handles date interpretation and passes exact dates to the tools.
 
 ## Development
 
