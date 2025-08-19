@@ -14,106 +14,79 @@ This MCP server is completely independent from the `be/` and `fe/` directories. 
 
 ## Available Tools
 
-### `get_team_billability`
+### Atomic tools (preferred)
 
-Returns raw billability data for team analysis - answers "How billable is a person/team?"
+- `get_tempo_worklogs`
+  - Purpose: Retrieve raw worklog data from Tempo
+  - Params: `{ from: string; to: string; userId?: string }`
+  - Returns: Tempo worklog array
 
-**Parameters:**
-- `from` (required): Start date in YYYY-MM-DD format
-- `to` (required): End date in YYYY-MM-DD format  
-- `userId` (optional): Specific user account ID (returns all users if not specified)
+- `get_tempo_plans`
+  - Purpose: Retrieve raw plan data from Tempo
+  - Params: `{ from: string; to: string; userId?: string }`
+  - Returns: Tempo plan array
 
-**Returns:**
-```json
-{
-  "totalHours": 320.5,
-  "billableHours": 280.25,
-  "nonBillableHours": 40.25,
-  "teamBillabilityPercentage": 87.44,
-  "userBillabilities": [
-    {
-      "userId": "user123",
-      "userName": "John Doe",
-      "totalHours": 40.0,
-      "billableHours": 35.0,
-      "nonBillableHours": 5.0,
-      "billabilityPercentage": 87.5
-    }
-  ],
-  "period": {
-    "from": "2025-01-13",
-    "to": "2025-01-19"
-  }
-}
-```
+- `get_jira_users`
+  - Purpose: Map Jira account IDs to display names
+  - Params: `{ accountIds: string[] }`
+  - Returns: `{ [accountId]: displayName }`
 
-### `get_team_availability`
+- `get_jira_issues`
+  - Purpose: Get issue details for IDs
+  - Params: `{ issueIds: string[] }`
+  - Returns: `{ [issueId]: { key, summary, project: { key, name } } }`
 
-Returns planned vs actual hours data - answers "Who's most available for new work?"
+- `calculate_billability`
+  - Purpose: Calculate billability percentages from worklogs
+  - Params: `{ worklogs: TempoWorklog[]; users?: Record<string,string> }`
+  - Returns: Team/user billability metrics
 
-**Parameters:**
-- `from` (required): Start date in YYYY-MM-DD format
-- `to` (required): End date in YYYY-MM-DD format  
-- `userId` (optional): Specific user account ID (returns all users if not specified)
+- `calculate_availability`
+  - Purpose: Calculate planned vs actual availability
+  - Params: `{ plans: TempoPlan[]; worklogs: TempoWorklog[]; users?: Record<string,string> }`
+  - Returns: Team/user availability metrics
 
-**Returns:**
-```json
-{
-  "totalPlannedHours": 400.0,
-  "totalActualHours": 350.5,
-  "teamAvailabilityPercentage": 87.63,
-  "userAvailabilities": [
-    {
-      "userId": "user123",
-      "userName": "John Doe",
-      "plannedHours": 40.0,
-      "actualHours": 35.5,
-      "availabilityPercentage": 88.75
-    }
-  ],
-  "period": {
-    "from": "2025-01-13",
-    "to": "2025-01-19"
-  }
-}
-```
+- `analyze_project_distribution`
+  - Purpose: Time distribution across projects
+  - Params: `{ worklogs: TempoWorklog[]; issues?: IssueMap }`
+  - Returns: `{ distribution: { projectKey, projectName, hours, billableHours }[] }`
 
-### `get_project_insights`
+- `get_user_ticket_work`
+  - Purpose: Per-user breakdown of ticket work with context
+  - Params: `{ worklogs: TempoWorklog[]; issues: IssueMap }`
+  - Returns: `{ [userId]: UserTicketWork[] }`
 
-Returns project-level time allocation and resource distribution.
+- `get_project_ticket_breakdown`
+  - Purpose: Per-project ticket breakdown with hours/percentages
+  - Params: `{ worklogs: TempoWorklog[]; issues: IssueMap }`
+  - Returns: `{ projectKey, projectName, tickets: { key, summary, hours, billableHours }[] }[]`
 
-**Parameters:**
-- `from` (required): Start date in YYYY-MM-DD format
-- `to` (required): End date in YYYY-MM-DD format
+### Legacy monolithic tools (to be deprecated)
 
-**Returns:**
-```json
-{
-  "totalProjects": 5,
-  "projectBreakdown": [
-    {
-      "projectKey": "PROJ",
-      "projectName": "PROJ Project",
-      "totalHours": 120.5,
-      "billableHours": 100.25,
-      "percentageOfTotal": 37.66
-    }
-  ],
-  "topProjects": [
-    {
-      "projectKey": "PROJ",
-      "projectName": "PROJ Project", 
-      "totalHours": 120.5,
-      "billableHours": 100.25,
-      "percentageOfTotal": 37.66
-    }
-  ],
-  "period": {
-    "from": "2025-01-13",
-    "to": "2025-01-19"
-  }
-}
-```
+- `get_team_billability` — returns team and per-user billability with ticket context
+- `get_team_availability` — returns team and per-user planned vs actual with context
+- `get_project_insights` — returns project-level time allocation and top projects
+
+These remain for backward compatibility during migration and will be removed after clients switch to atomic flows.
+
+## Example flows
+
+- Who worked on PLEXOS last week?
+  1. `get_tempo_worklogs({ from, to })`
+  2. Extract unique `issueIds`
+  3. `get_jira_issues({ issueIds })`
+  4. `get_user_ticket_work({ worklogs, issues })`
+  5. Client filters by ticket summary containing "PLEXOS"
+
+- What’s our team billability this week?
+  1. `get_tempo_worklogs({ from, to })`
+  2. `calculate_billability({ worklogs })`
+
+- Who’s planned for DM-742 this week?
+  1. `get_tempo_plans({ from, to })`
+  2. Extract unique `issueIds`
+  3. `get_jira_issues({ issueIds })`
+  4. Client searches for issue key "DM-742"
 
 ## Setup
 
