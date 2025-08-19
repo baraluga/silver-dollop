@@ -14,7 +14,7 @@ This MCP server is completely independent from the `be/` and `fe/` directories. 
 
 ## Available Tools
 
-### Atomic tools (preferred)
+### Atomic tools
 
 - `get_tempo_worklogs`
   - Purpose: Retrieve raw worklog data from Tempo
@@ -61,14 +61,6 @@ This MCP server is completely independent from the `be/` and `fe/` directories. 
   - Params: `{ worklogs: TempoWorklog[]; issues: IssueMap }`
   - Returns: `{ projectKey, projectName, tickets: { key, summary, hours, billableHours }[] }[]`
 
-### Legacy monolithic tools (to be deprecated)
-
-- `get_team_billability` — returns team and per-user billability with ticket context
-- `get_team_availability` — returns team and per-user planned vs actual with context
-- `get_project_insights` — returns project-level time allocation and top projects
-
-These remain for backward compatibility during migration and will be removed after clients switch to atomic flows.
-
 ## Example flows
 
 - Who worked on PLEXOS last week?
@@ -78,11 +70,11 @@ These remain for backward compatibility during migration and will be removed aft
   4. `get_user_ticket_work({ worklogs, issues })`
   5. Client filters by ticket summary containing "PLEXOS"
 
-- What’s our team billability this week?
+- What's our team billability this week?
   1. `get_tempo_worklogs({ from, to })`
   2. `calculate_billability({ worklogs })`
 
-- Who’s planned for DM-742 this week?
+- Who's planned for DM-742 this week?
   1. `get_tempo_plans({ from, to })`
   2. Extract unique `issueIds`
   3. `get_jira_issues({ issueIds })`

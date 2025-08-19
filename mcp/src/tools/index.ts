@@ -1,7 +1,3 @@
-import { getTeamBillability } from './get-team-billability';
-import { getTeamAvailability } from './get-team-availability';
-import { getProjectInsights } from './get-project-insights';
-
 // Atomic raw-data tools
 import { getTempoWorklogs } from './raw-data/get-tempo-worklogs';
 import { getTempoPlans } from './raw-data/get-tempo-plans';
@@ -16,20 +12,16 @@ import { getUserTicketWork } from './enrichment/get-user-ticket-work';
 import { getProjectTicketBreakdown } from './enrichment/get-project-ticket-breakdown';
 
 export {
-  // Existing monolithic tools
-  getTeamBillability,
-  getTeamAvailability,
-  getProjectInsights,
-  // New atomic raw-data tools
+  // Atomic raw-data tools
   getTempoWorklogs,
   getTempoPlans,
   getJiraUsers,
   getJiraIssues,
-  // New atomic calculation tools
+  // Atomic calculation tools
   calculateBillability,
   calculateAvailability,
   analyzeProjectDistribution,
-  // New atomic enrichment tools
+  // Atomic enrichment tools
   getUserTicketWork,
   getProjectTicketBreakdown
 };
