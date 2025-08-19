@@ -3,8 +3,9 @@ export interface TempoWorklog {
   jiraWorklogId: number;
   issue: {
     id: number;
-    key: string;
-    accountId: string;
+    key?: string;
+    accountId?: string;
+    self?: string;
   };
   timeSpentSeconds: number;
   billableSeconds: number;
@@ -15,6 +16,17 @@ export interface TempoWorklog {
     accountId: string;
     displayName: string;
   };
+  // Additional fields that might be present
+  [key: string]: any;
+}
+
+export interface UserTicketWork {
+  ticketKey: string;
+  ticketSummary: string;
+  projectKey: string;
+  projectName: string;
+  hours: number;
+  billableHours: number;
 }
 
 export interface UserBillability {
@@ -24,6 +36,7 @@ export interface UserBillability {
   billableHours: number;
   nonBillableHours: number;
   billabilityPercentage: number;
+  ticketWork: UserTicketWork[];
 }
 
 export interface TeamBillability {
@@ -42,12 +55,27 @@ export interface TempoPlan {
   id: number;
   assignee: {
     accountId: string;
-    displayName: string;
+    displayName?: string;
+    id: string;
+    type: string;
+  };
+  planItem: {
+    self: string;
+    id: string;
+    type: string;
   };
   plannedSecondsPerDay: number;
   totalPlannedSecondsInScope: number;
   startDate: string;
   endDate: string;
+}
+
+export interface UserPlannedWork {
+  ticketKey?: string;
+  ticketSummary?: string;
+  projectKey?: string;
+  projectName?: string;
+  plannedHours: number;
 }
 
 export interface UserAvailability {
@@ -56,6 +84,8 @@ export interface UserAvailability {
   plannedHours: number;
   actualHours: number;
   availabilityPercentage: number;
+  plannedWork: UserPlannedWork[];
+  actualWork: UserTicketWork[];
 }
 
 export interface TeamAvailability {
@@ -69,12 +99,21 @@ export interface TeamAvailability {
   };
 }
 
+export interface TicketBreakdown {
+  key: string;
+  summary: string;
+  hours: number;
+  billableHours: number;
+  percentageOfProject: number;
+}
+
 export interface ProjectBreakdownItem {
   projectKey: string;
   projectName: string;
   totalHours: number;
   billableHours: number;
   percentageOfTotal: number;
+  tickets: TicketBreakdown[];
 }
 
 export interface ProjectInsights {

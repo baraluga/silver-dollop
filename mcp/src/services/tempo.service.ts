@@ -100,7 +100,7 @@ export class TempoService {
   }
 
   filterUserPlans(userId: string, plans: TempoPlan[]): TempoPlan[] {
-    return plans.filter(plan => plan.assignee.accountId === userId);
+    return plans.filter(plan => plan.assignee.id === userId);
   }
 
   calculatePlannedHours(plans: TempoPlan[]): number {
@@ -112,7 +112,7 @@ export class TempoService {
     const userIds = new Set<string>();
     
     plans.forEach(plan => {
-      userIds.add(plan.assignee.accountId);
+      userIds.add(plan.assignee.id);
     });
     
     worklogs.forEach(worklog => {
@@ -123,8 +123,8 @@ export class TempoService {
   }
 
   extractUserNameFromPlansOrWorklogs(userId: string, plans: TempoPlan[], worklogs: TempoWorklog[]): string {
-    const plan = plans.find(p => p.assignee.accountId === userId);
-    if (plan) {
+    const plan = plans.find(p => p.assignee.id === userId);
+    if (plan && plan.assignee.displayName) {
       return plan.assignee.displayName;
     }
     
